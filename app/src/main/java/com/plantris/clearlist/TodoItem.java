@@ -1,11 +1,13 @@
 package com.plantris.clearlist;
 
 public class TodoItem {
-    String text;
-    boolean done;
+    private final String text;
 
     public TodoItem(String text) {
         this.text = text;
-        this.done = false;
+    }
+
+    public String getText() {
+        return text;
     }
 }

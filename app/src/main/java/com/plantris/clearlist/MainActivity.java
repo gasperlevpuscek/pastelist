@@ -1,52 +1,58 @@
 package com.plantris.clearlist;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.ImageButton;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArrayList<TodoItem> todoList;
-    AddTask adapter;
+    private final ArrayList<TodoItem> todoList = new ArrayList<>();
+    private TodoAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        todoList = new ArrayList<>();
-        adapter = new AddTask(todoList);
+        adapter = new TodoAdapter(todoList);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        Button addtaskbutton = findViewById(R.id.add_task_button);
-        EditText editText = findViewById(R.id.text_input_field);
+        findViewById(R.id.add_task_button).setOnClickListener(v -> showAddTaskSheet());
+    }
 
-        addtaskbutton.setOnClickListener(v -> {
-            String text = editText.getText().toString().trim();
-            if (!text.isEmpty()) {
-                todoList.add(new TodoItem(text));
-                adapter.notifyItemInserted(todoList.size() - 1);
-                editText.setText("");
-            }
+    private void showAddTaskSheet() {
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        View view = getLayoutInflater().inflate(R.layout.add_task, null, false);
+
+        EditText input = view.findViewById(R.id.text_input_field);
+        ImageButton btnAdd = view.findViewById(R.id.btnAdd);
+
+        btnAdd.setOnClickListener(v -> {
+            String text = input.getText().toString().trim();
+            if (text.isEmpty()) return;
+
+            todoList.add(new TodoItem(text));
+            adapter.notifyItemInserted(todoList.size() - 1);
+
+            dialog.dismiss();
         });
+
+        dialog.setContentView(view);
+        dialog.show();
+
+        // optional: focus input
+        input.requestFocus();
     }
 }
