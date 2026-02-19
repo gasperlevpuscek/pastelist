@@ -31,9 +31,10 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
     public void onBindViewHolder(@NonNull TodoVH holder, int position) {
         TodoItem item = items.get(position);
 
-        holder.textViewTask.setText(item.getText());
+        holder.textViewTitle.setText(item.getTitle());
+        holder.textViewDescription.setText(item.getDescription());
+        holder.textViewDate.setText(item.getDate());
 
-        // IMPORTANT: reset checkbox state because RecyclerView reuses views
         holder.checkBoxDone.setOnCheckedChangeListener(null);
         holder.checkBoxDone.setChecked(false);
 
@@ -55,12 +56,16 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
 
     public static class TodoVH extends RecyclerView.ViewHolder {
         CheckBox checkBoxDone;
-        TextView textViewTask;
+        TextView textViewTitle;
+        TextView textViewDescription;
+        TextView textViewDate;
 
         TodoVH(@NonNull View itemView) {
             super(itemView);
             checkBoxDone = itemView.findViewById(R.id.checkBoxDone);
-            textViewTask = itemView.findViewById(R.id.textViewTask);
+            textViewTitle = itemView.findViewById(R.id.textViewTitle);
+            textViewDescription = itemView.findViewById(R.id.textViewDescription);
+            textViewDate = itemView.findViewById(R.id.textViewDate);
         }
     }
 }

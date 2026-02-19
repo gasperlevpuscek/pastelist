@@ -1,7 +1,13 @@
 package com.plantris.clearlist;
+import android.app.DatePickerDialog;
+import java.util.Calendar;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
@@ -34,16 +40,59 @@ public class MainActivity extends AppCompatActivity {
 
     private void showAddTaskSheet() {
         BottomSheetDialog dialog = new BottomSheetDialog(this);
-        View view = getLayoutInflater().inflate(R.layout.add_task, null, false);
+        View view = getLayoutInflater().inflate(R.layout.add_task, null);
+        dialog.setContentView(view);
 
-        EditText input = view.findViewById(R.id.text_input_field);
-        ImageButton btnAdd = view.findViewById(R.id.btnAdd);
+        // VAR
+        EditText taskNameInput = view.findViewById(R.id.atTaskName);
+        EditText taskDescriptionInput = view.findViewById(R.id.atTaskDescription);
+        EditText taskDateInput = view.findViewById(R.id.atTaskPickDate);
+        ImageButton btnAdd = view.findViewById(R.id.atTaskAdd);
+
+
+        dialog.show();
+
+        // FOCUS TASK NAME INPUT
+        taskNameInput.post(() -> {
+            taskNameInput.requestFocus();
+            InputMethodManager imm =
+                    (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(taskNameInput, InputMethodManager.SHOW_IMPLICIT);
+        });
+
+
+        // DATE
+        taskDateInput.setOnClickListener(v -> {
+
+            Calendar calendar = Calendar.getInstance();
+
+            DatePickerDialog picker = new DatePickerDialog(
+                    MainActivity.this,
+                    (view1, year, month, day) -> {
+                        String selected = String.format("%02d.%02d.%d",
+                                day, month + 1, year);
+
+                        taskDateInput.setText(selected);
+                    },
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+            );
+            picker.show();
+        });
+
+        // ADD TASK
+
 
         btnAdd.setOnClickListener(v -> {
-            String text = input.getText().toString().trim();
-            if (text.isEmpty()) return;
 
-            todoList.add(new TodoItem(text));
+            String title = taskNameInput.getText().toString().trim();
+            String description = taskDescriptionInput.getText().toString().trim();
+            String date = taskDateInput.getText().toString();
+
+            if (title.isEmpty()) return;
+
+            todoList.add(new TodoItem(title, description, date));
             adapter.notifyItemInserted(todoList.size() - 1);
 
             dialog.dismiss();
@@ -51,8 +100,5 @@ public class MainActivity extends AppCompatActivity {
 
         dialog.setContentView(view);
         dialog.show();
-
-        // optional: focus input
-        input.requestFocus();
     }
 }
