@@ -2,12 +2,10 @@ package com.plantris.clearlist;
 import android.app.DatePickerDialog;
 import java.util.Calendar;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
@@ -18,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -69,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             DatePickerDialog picker = new DatePickerDialog(
                     MainActivity.this,
                     (view1, year, month, day) -> {
-                        String selected = String.format("%02d.%02d.%d",
+                        String selected = String.format(Locale.getDefault(), "%02d.%02d.%d",
                                 day, month + 1, year);
 
                         taskDateInput.setText(selected);
@@ -98,7 +97,5 @@ public class MainActivity extends AppCompatActivity {
             dialog.dismiss();
         });
 
-        dialog.setContentView(view);
-        dialog.show();
     }
 }

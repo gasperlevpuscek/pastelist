@@ -55,10 +55,10 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
     }
 
     public static class TodoVH extends RecyclerView.ViewHolder {
-        CheckBox checkBoxDone;
-        TextView textViewTitle;
-        TextView textViewDescription;
-        TextView textViewDate;
+        final CheckBox checkBoxDone;
+        final TextView textViewTitle;
+        final TextView textViewDescription;
+        final TextView textViewDate;
 
         TodoVH(@NonNull View itemView) {
             super(itemView);
