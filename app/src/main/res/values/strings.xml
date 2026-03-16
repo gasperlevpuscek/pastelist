@@ -3,5 +3,7 @@
     <string name="task_name">Task name</string>
     <string name="add_task">Add task</string>
     <string name="task_description">Task description</string>
+    <string name="atTaskDate">Task date</string>
+    <string name="atTaskTime">Task time</string>
 
 </resources>

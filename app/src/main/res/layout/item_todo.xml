@@ -10,7 +10,7 @@
     <CheckBox
         android:id="@+id/checkBoxDone"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <!-- Description -->
         <TextView
@@ -33,15 +33,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:alpha="0.7"/>
+            android:alpha="0.7" />
 
-        <!-- Date -->
-        <TextView
-            android:id="@+id/textViewDate"
-            android:layout_width="wrap_content"
+        <!-- Date and Time row -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:alpha="0.6"/>
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <!-- Date -->
+            <TextView
+                android:id="@+id/textViewDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="12sp"
+                android:alpha="0.6" />
+
+            <!-- Time -->
+            <TextView
+                android:id="@+id/textViewTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:alpha="0.6" />
+        </LinearLayout>
 
     </LinearLayout>
 

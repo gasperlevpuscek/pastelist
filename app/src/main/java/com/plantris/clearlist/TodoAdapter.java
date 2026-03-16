@@ -31,9 +31,19 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
     public void onBindViewHolder(@NonNull TodoVH holder, int position) {
         TodoItem item = items.get(position);
 
+      if(item.getDescription().isEmpty()) {
+          holder.textViewDescription.setVisibility(View.GONE);
+      }
+
+      if(item.getDate().isEmpty() && item.getTime().isEmpty()) {
+           holder.textViewTime.setVisibility(View.GONE);
+          holder.textViewDate.setVisibility(View.GONE);
+      }
+
         holder.textViewTitle.setText(item.getTitle());
         holder.textViewDescription.setText(item.getDescription());
         holder.textViewDate.setText(item.getDate());
+        holder.textViewTime.setText(item.getTime());
 
         holder.checkBoxDone.setOnCheckedChangeListener(null);
         holder.checkBoxDone.setChecked(false);
@@ -59,6 +69,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
         final TextView textViewTitle;
         final TextView textViewDescription;
         final TextView textViewDate;
+        final TextView textViewTime;
 
         TodoVH(@NonNull View itemView) {
             super(itemView);
@@ -66,6 +77,8 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
             textViewTitle = itemView.findViewById(R.id.textViewTitle);
             textViewDescription = itemView.findViewById(R.id.textViewDescription);
             textViewDate = itemView.findViewById(R.id.textViewDate);
+            textViewTime = itemView.findViewById(R.id.textViewTime);
+
         }
     }
 }

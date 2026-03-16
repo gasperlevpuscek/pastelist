@@ -2,12 +2,14 @@ package com.plantris.clearlist;
 import android.app.DatePickerDialog;
 import java.util.Calendar;
 
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -46,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
         EditText taskNameInput = view.findViewById(R.id.atTaskName);
         EditText taskDescriptionInput = view.findViewById(R.id.atTaskDescription);
         EditText taskDateInput = view.findViewById(R.id.atTaskPickDate);
+        EditText taskTimeInput = view.findViewById(R.id.atTaskPickTime);
         ImageButton btnAdd = view.findViewById(R.id.atTaskAdd);
-
 
         dialog.show();
 
@@ -65,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
             Calendar calendar = Calendar.getInstance();
 
-            DatePickerDialog picker = new DatePickerDialog(
+            DatePickerDialog datePicker = new DatePickerDialog(
                     MainActivity.this,
                     (view1, year, month, day) -> {
                         String selected = String.format(Locale.getDefault(), "%02d.%02d.%d",
@@ -77,21 +79,39 @@ public class MainActivity extends AppCompatActivity {
                     calendar.get(Calendar.MONTH),
                     calendar.get(Calendar.DAY_OF_MONTH)
             );
-            picker.show();
+            datePicker.show();
         });
 
         // ADD TASK
+        taskTimeInput.setOnClickListener(v -> {
+            TimePickerDialog timePicker = new TimePickerDialog(
+                    MainActivity.this,
+                    (view24, hourOfDay, minute) -> {
+                        String selected = String.format(Locale.getDefault(), "%02d:%02d",
+                                hourOfDay, minute);
 
+                        taskTimeInput.setText(selected);
+                    },
+                    12,
+                    0,
+                    true
+            );
+            timePicker.show();
+
+        });
 
         btnAdd.setOnClickListener(v -> {
-
             String title = taskNameInput.getText().toString().trim();
             String description = taskDescriptionInput.getText().toString().trim();
             String date = taskDateInput.getText().toString();
+            String time = taskTimeInput.getText().toString();
 
-            if (title.isEmpty()) return;
+            if (title.isEmpty()){
+                Toast.makeText(this, "Title must not be empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-            todoList.add(new TodoItem(title, description, date));
+            todoList.add(new TodoItem(title, description, date, time));
             adapter.notifyItemInserted(todoList.size() - 1);
 
             dialog.dismiss();
