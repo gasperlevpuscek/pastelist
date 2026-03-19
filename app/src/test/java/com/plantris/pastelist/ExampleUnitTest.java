@@ -1,4 +1,4 @@
-package com.plantris.clearlist;
+package com.plantris.pastelist;
 
 import org.junit.Test;
 

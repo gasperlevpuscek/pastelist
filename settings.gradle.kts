@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "clearlist"
+rootProject.name = "pastelist"
 include(":app")

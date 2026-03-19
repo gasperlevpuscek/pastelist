@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.plantris.clearlist"
+    namespace = "com.plantris.pastelist"
     compileSdk {
         version = release(36)
     }

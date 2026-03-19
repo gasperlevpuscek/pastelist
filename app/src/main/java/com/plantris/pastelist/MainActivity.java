@@ -1,10 +1,12 @@
-package com.plantris.clearlist;
+package com.plantris.pastelist;
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import java.util.Calendar;
 
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private final ArrayList<TodoItem> todoList = new ArrayList<>();
     private TodoAdapter adapter;
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+
+        DatabaseInsert dbHelper = new DatabaseInsert(this);
+        todoList.addAll(dbHelper.readAllEntries());
+        dbHelper.close();
+        adapter.notifyDataSetChanged();
 
         findViewById(R.id.add_task_button).setOnClickListener(v -> showAddTaskSheet());
     }
@@ -109,6 +117,15 @@ public class MainActivity extends AppCompatActivity {
             if (title.isEmpty()){
                 Toast.makeText(this, "Title must not be empty", Toast.LENGTH_SHORT).show();
                 return;
+            }
+
+            try (DatabaseInsert dbHelper = new DatabaseInsert(this)) {
+                long newRowId = dbHelper.insertEntry(
+                        title,
+                        description,
+                        date,
+                        time
+                );
             }
 
             todoList.add(new TodoItem(title, description, date, time));

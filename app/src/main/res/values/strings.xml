@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">clearlist</string>
+    <string name="app_name">pastelist</string>
     <string name="task_name">Task name</string>
     <string name="add_task">Add task</string>
     <string name="task_description">Task description</string>

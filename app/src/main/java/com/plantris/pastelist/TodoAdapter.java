@@ -1,4 +1,4 @@
-package com.plantris.clearlist;
+package com.plantris.pastelist;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,15 +31,6 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
     public void onBindViewHolder(@NonNull TodoVH holder, int position) {
         TodoItem item = items.get(position);
 
-      if(item.getDescription().isEmpty()) {
-          holder.textViewDescription.setVisibility(View.GONE);
-      }
-
-      if(item.getDate().isEmpty() && item.getTime().isEmpty()) {
-           holder.textViewTime.setVisibility(View.GONE);
-          holder.textViewDate.setVisibility(View.GONE);
-      }
-
         holder.textViewTitle.setText(item.getTitle());
         holder.textViewDescription.setText(item.getDescription());
         holder.textViewDate.setText(item.getDate());
@@ -47,6 +38,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
 
         holder.checkBoxDone.setOnCheckedChangeListener(null);
         holder.checkBoxDone.setChecked(false);
+
 
         holder.checkBoxDone.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
