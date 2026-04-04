@@ -5,5 +5,7 @@
     <string name="task_description">Task description</string>
     <string name="atTaskDate">Task date</string>
     <string name="atTaskTime">Task time</string>
+    <string name="completed_task">Switch to completed tasks</string>
+
 
 </resources>

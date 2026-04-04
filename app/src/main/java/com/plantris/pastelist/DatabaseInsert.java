@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class DatabaseInsert extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "PasteList.db";
 
     public DatabaseInsert(Context context) {
@@ -24,8 +24,13 @@ public class DatabaseInsert extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(DatabaseManager.SQL_DELETE_ENTRIES);
-        onCreate(db);
+        if (oldVersion < 2) {
+            db.execSQL(
+                    "ALTER TABLE " + DatabaseManager.FeedEntry.TABLE_NAME +
+                            " ADD COLUMN " + DatabaseManager.FeedEntry.COLUMN_NAME_COMPLETED +
+                            " INTEGER NOT NULL DEFAULT 0"
+            );
+        }
     }
 
     @Override
@@ -34,6 +39,10 @@ public class DatabaseInsert extends SQLiteOpenHelper {
     }
 
     public long insertEntry(String title, String description, String date, String time) {
+        return insertEntry(title, description, date, time, false);
+    }
+
+    public long insertEntry(String title, String description, String date, String time, boolean isCompleted) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -41,8 +50,21 @@ public class DatabaseInsert extends SQLiteOpenHelper {
         values.put(DatabaseManager.FeedEntry.COLUMN_NAME_DESCRIPTION, description);
         values.put(DatabaseManager.FeedEntry.COLUMN_NAME_DATE, date);
         values.put(DatabaseManager.FeedEntry.COLUMN_NAME_TIME, time);
+        values.put(DatabaseManager.FeedEntry.COLUMN_NAME_COMPLETED, isCompleted ? 1 : 0);
 
         return db.insert(DatabaseManager.FeedEntry.TABLE_NAME, null, values);
+    }
+
+    public int updateCompleted(long id, boolean isCompleted) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(DatabaseManager.FeedEntry.COLUMN_NAME_COMPLETED, isCompleted ? 1 : 0);
+
+        String selection = DatabaseManager.FeedEntry._ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
+
+        return db.update(DatabaseManager.FeedEntry.TABLE_NAME, values, selection, selectionArgs);
     }
 
     public ArrayList<TodoItem> readAllEntries() {
@@ -50,10 +72,12 @@ public class DatabaseInsert extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
 
         String[] projection = {
+                DatabaseManager.FeedEntry._ID,
                 DatabaseManager.FeedEntry.COLUMN_NAME_TITLE,
                 DatabaseManager.FeedEntry.COLUMN_NAME_DESCRIPTION,
                 DatabaseManager.FeedEntry.COLUMN_NAME_DATE,
-                DatabaseManager.FeedEntry.COLUMN_NAME_TIME
+                DatabaseManager.FeedEntry.COLUMN_NAME_TIME,
+                DatabaseManager.FeedEntry.COLUMN_NAME_COMPLETED
         };
 
         Cursor cursor = db.query(
@@ -67,6 +91,9 @@ public class DatabaseInsert extends SQLiteOpenHelper {
         );
 
         while (cursor.moveToNext()) {
+            long id = cursor.getLong(
+                    cursor.getColumnIndexOrThrow(DatabaseManager.FeedEntry._ID)
+            );
             String title = cursor.getString(
                     cursor.getColumnIndexOrThrow(DatabaseManager.FeedEntry.COLUMN_NAME_TITLE)
             );
@@ -79,8 +106,11 @@ public class DatabaseInsert extends SQLiteOpenHelper {
             String time = cursor.getString(
                     cursor.getColumnIndexOrThrow(DatabaseManager.FeedEntry.COLUMN_NAME_TIME)
             );
+            boolean isCompleted = cursor.getInt(
+                    cursor.getColumnIndexOrThrow(DatabaseManager.FeedEntry.COLUMN_NAME_COMPLETED)
+            ) == 1;
 
-            items.add(new TodoItem(title, subtitle, date, time));
+            items.add(new TodoItem(id, title, subtitle, date, time, isCompleted));
         }
 
         cursor.close();

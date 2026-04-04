@@ -2,16 +2,32 @@ package com.plantris.pastelist;
 
 public class TodoItem {
 
+    private final long id;
     private final String title;
     private final String description;
     private final String date;
     private final String time;
+    private boolean isCompleted;
 
     public TodoItem(String title, String description, String date, String time) {
+        this(-1L, title, description, date, time, false);
+    }
+
+    public TodoItem(String title, String description, String date, String time, boolean isCompleted) {
+        this(-1L, title, description, date, time, isCompleted);
+    }
+
+    public TodoItem(long id, String title, String description, String date, String time, boolean isCompleted) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.date = date;
         this.time = time;
+        this.isCompleted = isCompleted;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getTitle() {
@@ -28,5 +44,13 @@ public class TodoItem {
 
     public String getTime() {
         return time;
+    }
+
+    public boolean isCompleted() {
+        return isCompleted;
+    }
+
+    public void setCompleted(boolean completed) {
+        isCompleted = completed;
     }
 }

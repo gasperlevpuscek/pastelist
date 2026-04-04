@@ -14,9 +14,15 @@ import java.util.ArrayList;
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
 
     private final ArrayList<TodoItem> items;
+    private final OnTodoCompletedListener onTodoCompletedListener;
 
-    public TodoAdapter(ArrayList<TodoItem> items) {
+    public interface OnTodoCompletedListener {
+        void onTodoCompleted(TodoItem item);
+    }
+
+    public TodoAdapter(ArrayList<TodoItem> items, OnTodoCompletedListener onTodoCompletedListener) {
         this.items = items;
+        this.onTodoCompletedListener = onTodoCompletedListener;
     }
 
     @NonNull
@@ -37,13 +43,16 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
         holder.textViewTime.setText(item.getTime());
 
         holder.checkBoxDone.setOnCheckedChangeListener(null);
-        holder.checkBoxDone.setChecked(false);
+        holder.checkBoxDone.setChecked(item.isCompleted());
 
 
         holder.checkBoxDone.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 int adapterPos = holder.getBindingAdapterPosition();
                 if (adapterPos != RecyclerView.NO_POSITION) {
+                    TodoItem completedItem = items.get(adapterPos);
+                    completedItem.setCompleted(true);
+                    onTodoCompletedListener.onTodoCompleted(completedItem);
                     items.remove(adapterPos);
                     notifyItemRemoved(adapterPos);
                 }

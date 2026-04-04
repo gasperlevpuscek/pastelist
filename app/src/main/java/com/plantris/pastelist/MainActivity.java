@@ -6,7 +6,6 @@ import java.util.Calendar;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -34,13 +33,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        adapter = new TodoAdapter(todoList);
+        adapter = new TodoAdapter(todoList, completedItem -> {
+            try (DatabaseInsert dbHelper = new DatabaseInsert(this)) {
+                dbHelper.updateCompleted(completedItem.getId(), true);
+            }
+        });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
         DatabaseInsert dbHelper = new DatabaseInsert(this);
-        todoList.addAll(dbHelper.readAllEntries());
+        for (TodoItem item : dbHelper.readAllEntries()) {
+            if (!item.isCompleted()) {
+                todoList.add(item);
+            }
+        }
         dbHelper.close();
         adapter.notifyDataSetChanged();
 
@@ -119,16 +126,18 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
+            long newRowId;
             try (DatabaseInsert dbHelper = new DatabaseInsert(this)) {
-                long newRowId = dbHelper.insertEntry(
+                newRowId = dbHelper.insertEntry(
                         title,
                         description,
                         date,
-                        time
+                        time,
+                        false
                 );
             }
 
-            todoList.add(new TodoItem(title, description, date, time));
+            todoList.add(new TodoItem(newRowId, title, description, date, time, false));
             adapter.notifyItemInserted(todoList.size() - 1);
 
             dialog.dismiss();
