@@ -14,15 +14,15 @@ import java.util.ArrayList;
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
 
     private final ArrayList<TodoItem> items;
-    private final OnTodoCompletedListener onTodoCompletedListener;
+    private final OnTodoCompletionChangedListener onTodoCompletionChangedListener;
 
-    public interface OnTodoCompletedListener {
-        void onTodoCompleted(TodoItem item);
+    public interface OnTodoCompletionChangedListener {
+        void onTodoCompletionChanged(TodoItem item, boolean isCompleted);
     }
 
-    public TodoAdapter(ArrayList<TodoItem> items, OnTodoCompletedListener onTodoCompletedListener) {
+    public TodoAdapter(ArrayList<TodoItem> items, OnTodoCompletionChangedListener onTodoCompletionChangedListener) {
         this.items = items;
-        this.onTodoCompletedListener = onTodoCompletedListener;
+        this.onTodoCompletionChangedListener = onTodoCompletionChangedListener;
     }
 
     @NonNull
@@ -47,15 +47,13 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
 
 
         holder.checkBoxDone.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                int adapterPos = holder.getBindingAdapterPosition();
-                if (adapterPos != RecyclerView.NO_POSITION) {
-                    TodoItem completedItem = items.get(adapterPos);
-                    completedItem.setCompleted(true);
-                    onTodoCompletedListener.onTodoCompleted(completedItem);
-                    items.remove(adapterPos);
-                    notifyItemRemoved(adapterPos);
-                }
+            int adapterPos = holder.getBindingAdapterPosition();
+            if (adapterPos != RecyclerView.NO_POSITION) {
+                TodoItem changedItem = items.get(adapterPos);
+                changedItem.setCompleted(isChecked);
+                onTodoCompletionChangedListener.onTodoCompletionChanged(changedItem, isChecked);
+                items.remove(adapterPos);
+                notifyItemRemoved(adapterPos);
             }
         });
     }

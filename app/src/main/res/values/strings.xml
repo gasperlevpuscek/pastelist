@@ -5,7 +5,10 @@
     <string name="task_description">Task description</string>
     <string name="atTaskDate">Task date</string>
     <string name="atTaskTime">Task time</string>
-    <string name="completed_task">Switch to completed tasks</string>
+    <string name="switch_views">Switch views</string>
+    <string name="add_time">Add time</string>
+    <string name="save">Save</string>
+    <string name="date">Date</string>
 
 
 </resources>

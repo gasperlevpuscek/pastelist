@@ -38,8 +38,8 @@
     </Button>
 
     <Button
-        android:id="@+id/completed_tasks"
-        android:text="@string/completed_task"
+        android:id="@+id/switch_views"
+        android:text="@string/switch_views"
         android:layout_width="107dp"
         android:layout_height="51dp"
         android:layout_marginEnd="20dp"

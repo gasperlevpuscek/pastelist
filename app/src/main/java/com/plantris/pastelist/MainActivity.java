@@ -1,15 +1,18 @@
 package com.plantris.pastelist;
 import android.annotation.SuppressLint;
-import android.app.DatePickerDialog;
 import java.util.Calendar;
 
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CalendarView;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -25,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final ArrayList<TodoItem> todoList = new ArrayList<>();
     private TodoAdapter adapter;
+    private boolean showCompletedOnly = false;
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
@@ -33,25 +38,35 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        adapter = new TodoAdapter(todoList, completedItem -> {
+        adapter = new TodoAdapter(todoList, (changedItem, isCompleted) -> {
             try (DatabaseInsert dbHelper = new DatabaseInsert(this)) {
-                dbHelper.updateCompleted(completedItem.getId(), true);
+                dbHelper.updateCompleted(changedItem.getId(), isCompleted);
             }
         });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        DatabaseInsert dbHelper = new DatabaseInsert(this);
-        for (TodoItem item : dbHelper.readAllEntries()) {
-            if (!item.isCompleted()) {
-                todoList.add(item);
-            }
-        }
-        dbHelper.close();
-        adapter.notifyDataSetChanged();
+        loadTasks(false);
 
         findViewById(R.id.add_task_button).setOnClickListener(v -> showAddTaskSheet());
+        findViewById(R.id.switch_views).setOnClickListener(v -> loadTasks(!showCompletedOnly));
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void loadTasks(boolean completedOnly) {
+        showCompletedOnly = completedOnly;
+        todoList.clear();
+
+        try (DatabaseInsert dbHelper = new DatabaseInsert(this)) {
+            for (TodoItem item : dbHelper.readAllEntries()) {
+                if (item.isCompleted() == completedOnly) {
+                    todoList.add(item);
+                }
+            }
+        }
+
+        adapter.notifyDataSetChanged();
     }
 
     private void showAddTaskSheet() {
@@ -62,9 +77,11 @@ public class MainActivity extends AppCompatActivity {
         // VAR
         EditText taskNameInput = view.findViewById(R.id.atTaskName);
         EditText taskDescriptionInput = view.findViewById(R.id.atTaskDescription);
-        EditText taskDateInput = view.findViewById(R.id.atTaskPickDate);
-        EditText taskTimeInput = view.findViewById(R.id.atTaskPickTime);
         ImageButton btnAdd = view.findViewById(R.id.atTaskAdd);
+        MaterialButton btnOpenDatePicker = view.findViewById(R.id.atTaskOpenDatePicker);
+
+        final String[] selectedDate = {""};
+        final String[] selectedTime = {""};
 
         dialog.show();
 
@@ -77,49 +94,49 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        // DATE
-        taskDateInput.setOnClickListener(v -> {
+        btnOpenDatePicker.setOnClickListener(v -> {
+            BottomSheetDialog dateDialog = new BottomSheetDialog(this);
+            View dateView = getLayoutInflater().inflate(R.layout.add_task_date, null);
+            dateDialog.setContentView(dateView);
 
-            Calendar calendar = Calendar.getInstance();
+            CalendarView calendarView = dateView.findViewById(R.id.calendarView);
+            LinearLayout optionAddTime = dateView.findViewById(R.id.optionAddTime);
+            TextView tvAddTime = dateView.findViewById(R.id.tvAddTime);
+            Button btnSaveDate = dateView.findViewById(R.id.btnSaveDate);
 
-            DatePickerDialog datePicker = new DatePickerDialog(
-                    MainActivity.this,
-                    (view1, year, month, day) -> {
-                        String selected = String.format(Locale.getDefault(), "%02d.%02d.%d",
-                                day, month + 1, year);
+            tvAddTime.setText(selectedTime[0].isEmpty() ? getString(R.string.add_time) : selectedTime[0]);
 
-                        taskDateInput.setText(selected);
-                    },
-                    calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DAY_OF_MONTH)
-            );
-            datePicker.show();
-        });
+            calendarView.setOnDateChangeListener((cv, year, month, dayOfMonth) -> selectedDate[0] =
+                    String.format(Locale.getDefault(), "%02d.%02d.%d", dayOfMonth, month + 1, year));
 
-        // ADD TASK
-        taskTimeInput.setOnClickListener(v -> {
-            TimePickerDialog timePicker = new TimePickerDialog(
-                    MainActivity.this,
-                    (view24, hourOfDay, minute) -> {
-                        String selected = String.format(Locale.getDefault(), "%02d:%02d",
-                                hourOfDay, minute);
+            optionAddTime.setOnClickListener(timeView -> {
+                Calendar now = Calendar.getInstance();
+                TimePickerDialog timePicker = new TimePickerDialog(
+                        MainActivity.this,
+                        (pickerView, hourOfDay, minute) -> {
+                            selectedTime[0] = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute);
+                            tvAddTime.setText(selectedTime[0]);
+                        },
+                        now.get(Calendar.HOUR_OF_DAY),
+                        now.get(Calendar.MINUTE),
+                        true
+                );
+                timePicker.show();
+            });
 
-                        taskTimeInput.setText(selected);
-                    },
-                    12,
-                    0,
-                    true
-            );
-            timePicker.show();
+            btnSaveDate.setOnClickListener(saveView -> {
+                btnOpenDatePicker.setText(formatDateTimeLabel(selectedDate[0], selectedTime[0]));
+                dateDialog.dismiss();
+            });
 
+            dateDialog.show();
         });
 
         btnAdd.setOnClickListener(v -> {
             String title = taskNameInput.getText().toString().trim();
             String description = taskDescriptionInput.getText().toString().trim();
-            String date = taskDateInput.getText().toString();
-            String time = taskTimeInput.getText().toString();
+            String date = selectedDate[0];
+            String time = selectedTime[0];
 
             if (title.isEmpty()){
                 Toast.makeText(this, "Title must not be empty", Toast.LENGTH_SHORT).show();
@@ -137,11 +154,23 @@ public class MainActivity extends AppCompatActivity {
                 );
             }
 
-            todoList.add(new TodoItem(newRowId, title, description, date, time, false));
-            adapter.notifyItemInserted(todoList.size() - 1);
+            if (!showCompletedOnly) {
+                todoList.add(new TodoItem(newRowId, title, description, date, time, false));
+                adapter.notifyItemInserted(todoList.size() - 1);
+            }
 
             dialog.dismiss();
         });
 
+    }
+
+    private String formatDateTimeLabel(String date, String time) {
+        if (date == null || date.isEmpty()) {
+            return "";
+        }
+        if (time == null || time.isEmpty()) {
+            return date;
+        }
+        return date + " " + time;
     }
 }
