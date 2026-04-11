@@ -39,6 +39,7 @@ public final class DateSheet {
 
         CalendarView calendarView = dateView.findViewById(R.id.calendarView);
         LinearLayout optionAddTime = dateView.findViewById(R.id.optionAddTime);
+        calendarView.setMinDate(System.currentTimeMillis());
         TextView tvAddTime = dateView.findViewById(R.id.tvAddTime);
         Button btnSaveDate = dateView.findViewById(R.id.btnSaveDate);
         Button btnNoDate = dateView.findViewById(R.id.btnNoDate);

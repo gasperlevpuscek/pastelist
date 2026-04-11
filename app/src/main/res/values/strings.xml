@@ -2,6 +2,7 @@
     <string name="app_name">pastelist</string>
     <string name="task_name">Task name</string>
     <string name="add_task">Add task</string>
+    <string name="inbox">Inbox</string>
     <string name="task_description">Task description</string>
     <string name="atTaskDate">Task date</string>
     <string name="atTaskTime">Task time</string>
@@ -11,5 +12,6 @@
     <string name="no_date">No date</string>
     <string name="date">Date</string>
 
+    <string name="tmp">tmp</string>
 
 </resources>

@@ -3,4 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:text="settings"
+        android:textSize="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </TextView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
