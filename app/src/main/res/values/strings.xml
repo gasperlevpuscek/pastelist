@@ -11,7 +11,9 @@
     <string name="save">Save</string>
     <string name="no_date">No date</string>
     <string name="date">Date</string>
-
+    <string name="upcoming">Upcoming</string>
+    <string name="preferences">Preferences</string>
+    <string name="tasks">Tasks</string>
     <string name="tmp">tmp</string>
 
 </resources>

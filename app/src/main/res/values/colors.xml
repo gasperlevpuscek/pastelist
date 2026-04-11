@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="white">#FFFFFFFF</color>
-    <color name="c1c1c1">#c1c1c1</color>
+    <!--Green-->
+    <color name="pastelistGreen">#a7e8b7</color>
+    <!--Primary app colors-->
+    <color name="backgroundWhite">#FFFFFFFF</color>
+    <color name="secondaryGray">#dbdbdb</color>
+    <color name="textGray">#3a3a3a</color>
+
+
+    <!--Less important colors-->
+
     <color name="FEF7FF">#FEF7FF</color>
+    <color name="c1c1c1">#c1c1c1</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="lightGray">#737373</color>
+
 </resources>

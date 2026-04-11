@@ -44,8 +44,21 @@ public final class DateSheet {
         Button btnSaveDate = dateView.findViewById(R.id.btnSaveDate);
         Button btnNoDate = dateView.findViewById(R.id.btnNoDate);
 
-        final String[] selectedDate = {initialDate == null ? "" : initialDate};
+        Calendar now = Calendar.getInstance();
+        String today = String.format(
+                Locale.getDefault(),
+                "%02d.%02d.%d",
+                now.get(Calendar.DAY_OF_MONTH),
+                now.get(Calendar.MONTH) + 1,
+                now.get(Calendar.YEAR)
+        );
+
+        final String[] selectedDate = {
+                (initialDate == null || initialDate.trim().isEmpty()) ? today : initialDate
+        };
         final String[] selectedTime = {initialTime == null ? "" : initialTime};
+
+        calendarView.setDate(now.getTimeInMillis(), false, true);
 
         tvAddTime.setText(selectedTime[0].isEmpty() ? activity.getString(R.string.add_time) : selectedTime[0]);
 
@@ -54,15 +67,15 @@ public final class DateSheet {
         );
 
         optionAddTime.setOnClickListener(timeView -> {
-            Calendar now = Calendar.getInstance();
+            Calendar timeNow = Calendar.getInstance();
             TimePickerDialog timePicker = new TimePickerDialog(
                     activity,
                     (pickerView, hourOfDay, minute) -> {
                         selectedTime[0] = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute);
                         tvAddTime.setText(selectedTime[0]);
                     },
-                    now.get(Calendar.HOUR_OF_DAY),
-                    now.get(Calendar.MINUTE),
+                    timeNow.get(Calendar.HOUR_OF_DAY),
+                    timeNow.get(Calendar.MINUTE),
                     true
             );
             timePicker.show();

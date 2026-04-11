@@ -2,13 +2,15 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:padding="16dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:backgroundTint="@color/backgroundWhite"
+    android:background="@color/backgroundWhite">
 
     <EditText
+        android:background="@null"
         android:id="@+id/atTaskName"
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -19,13 +21,14 @@
         android:autofillHints="Task name"/>
 
     <EditText
+        android:background="@null"
         android:id="@+id/atTaskDescription"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:hint="@string/task_description"
         android:inputType="textMultiLine"
         android:layout_marginTop="8dp"
-        android:autofillHints="Task description"/>
+        android:autofillHints="Description"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout"
@@ -35,23 +38,27 @@
 
         <ImageButton
             android:id="@+id/atTaskAdd"
-            android:layout_width="50dp"
-            android:layout_height="48dp"
-            android:background="@android:color/transparent"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="148dp"
+            android:background="@color/pastelistGreen"
             android:contentDescription="@string/add_task"
-            android:src="@android:drawable/ic_media_play"
+            android:src="@android:drawable/ic_menu_send"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/atTaskOpenDatePicker"
             app:layout_constraintTop_toTopOf="@+id/atTaskOpenDatePicker"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.428"
+            app:tint="@color/white" />
 
         <com.google.android.material.button.MaterialButton
+
+            android:backgroundTint="@color/white"
+            android:textColor="@color/lightGray"
             android:id="@+id/atTaskOpenDatePicker"
             android:layout_width="186dp"
             android:layout_height="49dp"
             android:text="@string/date"
+
             android:textAllCaps="false"
             app:cornerRadius="12dp"
             app:layout_constraintBottom_toBottomOf="parent"

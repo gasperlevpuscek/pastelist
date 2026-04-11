@@ -1,32 +1,39 @@
 <LinearLayout android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:backgroundTint="@color/backgroundWhite"
+    android:background="@color/backgroundWhite">
 
     <androidx.viewpager2.widget.ViewPager2
-        android:layout_width="match_parent"
         android:id="@+id/viewPager"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/secondaryGray">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnTasks"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Tasks"/>
+            android:text="@string/tasks"
+            android:backgroundTint="@color/secondaryGray"
+            android:textColor="@color/textGray" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnUpcoming"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Upcoming"/>
+            android:textColor="@color/textGray"
+            android:backgroundTint="@color/secondaryGray"
+            android:text="@string/upcoming"/>
 
     </LinearLayout>
 

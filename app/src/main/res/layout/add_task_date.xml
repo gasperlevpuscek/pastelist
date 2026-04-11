@@ -4,8 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@android:color/white"
+    android:backgroundTint="@color/backgroundWhite"
+    android:background="@color/backgroundWhite"
     android:paddingTop="16dp">
+
 
     <TextView
         android:id="@+id/tvDateTitle"
@@ -14,12 +16,14 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="12dp"
-        android:text="@string/atTaskDate"
-        android:textSize="28sp"
-        android:textColor="@android:color/black" />
-
+        android:text="@string/date"
+        android:textColor="@android:color/black"
+        android:textSize="28sp" />
 
     <Button
+       android:focusedMonthDateColor="@color/pastelistGreen"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/textGray"
         android:id="@+id/btnNoDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,6 +40,7 @@
         android:background="#E0E0E0" />
 
     <CalendarView
+        android:background="@android:color/white"
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -73,6 +78,8 @@
     </LinearLayout>
 
     <Button
+        android:backgroundTint="@color/pastelistGreen"
+        android:textColor="@color/textGray"
         android:id="@+id/btnSaveDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
