@@ -16,11 +16,11 @@ public class MainActivity extends AppCompatActivity {
 
         ViewPager2 viewPager = findViewById(R.id.viewPager);
         MaterialButton btnTasks = findViewById(R.id.btnTasks);
-        MaterialButton btnSettings = findViewById(R.id.btnSettings);
+        MaterialButton btnUpcoming = findViewById(R.id.btnUpcoming);
 
         viewPager.setAdapter(new MainPagerAdapter(this));
 
         btnTasks.setOnClickListener(v -> viewPager.setCurrentItem(0, true));
-        btnSettings.setOnClickListener(v -> viewPager.setCurrentItem(2, true));
+        btnUpcoming.setOnClickListener(v -> viewPager.setCurrentItem(1, true));
     }
 }

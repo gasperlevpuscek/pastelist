@@ -22,11 +22,11 @@
             android:text="Tasks"/>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSettings"
+            android:id="@+id/btnUpcoming"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Settings"/>
+            android:text="Upcoming"/>
 
     </LinearLayout>
 

@@ -12,19 +12,24 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class UpcomingDateAdapter extends RecyclerView.Adapter<UpcomingDateAdapter.UpcomingDateViewHolder> {
 
     private final ArrayList<LocalDate> upcomingDates = new ArrayList<>();
+    private final Map<LocalDate, List<TodoItem>> tasksByDate = new java.util.HashMap<>();
     private final DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("EEE", Locale.getDefault());
     private final DateTimeFormatter numberFormatter = DateTimeFormatter.ofPattern("dd", Locale.getDefault());
     private final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMM", Locale.getDefault());
 
-    public void setDates(@NonNull List<LocalDate> dates) {
+    public void setData(@NonNull List<LocalDate> dates, @NonNull Map<LocalDate, List<TodoItem>> groupedTasks) {
         upcomingDates.clear();
         upcomingDates.addAll(dates);
+        tasksByDate.clear();
+        tasksByDate.putAll(groupedTasks);
         notifyDataSetChanged();
     }
 
@@ -44,6 +49,20 @@ public class UpcomingDateAdapter extends RecyclerView.Adapter<UpcomingDateAdapte
         holder.upcomingViewDateNumber.setText(date.format(numberFormatter));
         holder.upcomingViewMonth.setText(date.format(monthFormatter).toUpperCase(Locale.getDefault()));
         holder.upcomingTaskContainer.removeAllViews();
+
+        List<TodoItem> tasksForDate = tasksByDate.getOrDefault(date, Collections.emptyList());
+        LayoutInflater inflater = LayoutInflater.from(holder.itemView.getContext());
+        for (TodoItem task : tasksForDate) {
+            View taskView = inflater.inflate(R.layout.item_upcoming_task, holder.upcomingTaskContainer, false);
+            TextView taskName = taskView.findViewById(R.id.upcomingViewTaskName);
+            TextView taskTime = taskView.findViewById(R.id.upcomingViewTaskTime);
+
+            taskName.setText(task.getTitle());
+            String time = task.getTime() == null ? "" : task.getTime();
+            taskTime.setText(time);
+
+            holder.upcomingTaskContainer.addView(taskView);
+        }
     }
 
     @Override
