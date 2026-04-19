@@ -29,14 +29,18 @@ public class TaskFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
-        adapter = new TodoAdapter(todoList, (changedItem, isCompleted) -> {
-            if (getContext() == null) {
-                return;
-            }
-            try (DatabaseInsert dbHelper = new DatabaseInsert(getContext())) {
-                dbHelper.updateCompleted(changedItem.getId(), isCompleted);
-            }
-        });
+        adapter = new TodoAdapter(
+                todoList,
+                (changedItem, isCompleted) -> {
+                    if (getContext() == null) {
+                        return;
+                    }
+                    try (DatabaseInsert dbHelper = new DatabaseInsert(getContext())) {
+                        dbHelper.updateCompleted(changedItem.getId(), isCompleted);
+                    }
+                },
+                this::showEditTaskSheet
+        );
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(adapter);
@@ -75,6 +79,19 @@ public class TaskFragment extends Fragment {
         AddTaskSheet.show((AppCompatActivity) requireActivity(), showCompletedOnly, item -> {
             todoList.add(item);
             adapter.notifyItemInserted(todoList.size() - 1);
+        });
+    }
+
+    private void showEditTaskSheet(TodoItem item, int position) {
+        if (!(requireActivity() instanceof AppCompatActivity)) {
+            return;
+        }
+
+        AddTaskSheet.show((AppCompatActivity) requireActivity(), showCompletedOnly, item, (savedItem, isNewTask) -> {
+            if (!isNewTask && position >= 0 && position < todoList.size()) {
+                todoList.set(position, savedItem);
+                adapter.notifyItemChanged(position);
+            }
         });
     }
 }

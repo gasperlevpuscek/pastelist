@@ -67,6 +67,21 @@ public class DatabaseInsert extends SQLiteOpenHelper {
         return db.update(DatabaseManager.FeedEntry.TABLE_NAME, values, selection, selectionArgs);
     }
 
+    public int updateEntry(long id, String title, String description, String date, String time) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(DatabaseManager.FeedEntry.COLUMN_NAME_TITLE, title);
+        values.put(DatabaseManager.FeedEntry.COLUMN_NAME_DESCRIPTION, description);
+        values.put(DatabaseManager.FeedEntry.COLUMN_NAME_DATE, date);
+        values.put(DatabaseManager.FeedEntry.COLUMN_NAME_TIME, time);
+
+        String selection = DatabaseManager.FeedEntry._ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
+
+        return db.update(DatabaseManager.FeedEntry.TABLE_NAME, values, selection, selectionArgs);
+    }
+
     public ArrayList<TodoItem> readAllEntries() {
         ArrayList<TodoItem> items = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();

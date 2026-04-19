@@ -15,14 +15,24 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
 
     private final ArrayList<TodoItem> items;
     private final OnTodoCompletionChangedListener onTodoCompletionChangedListener;
+    private final OnTodoItemClickListener onTodoItemClickListener;
 
     public interface OnTodoCompletionChangedListener {
         void onTodoCompletionChanged(TodoItem item, boolean isCompleted);
     }
 
-    public TodoAdapter(ArrayList<TodoItem> items, OnTodoCompletionChangedListener onTodoCompletionChangedListener) {
+    public interface OnTodoItemClickListener {
+        void onTodoItemClick(TodoItem item, int position);
+    }
+
+    public TodoAdapter(
+            ArrayList<TodoItem> items,
+            OnTodoCompletionChangedListener onTodoCompletionChangedListener,
+            OnTodoItemClickListener onTodoItemClickListener
+    ) {
         this.items = items;
         this.onTodoCompletionChangedListener = onTodoCompletionChangedListener;
+        this.onTodoItemClickListener = onTodoItemClickListener;
     }
 
     @NonNull
@@ -54,6 +64,13 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
                 onTodoCompletionChangedListener.onTodoCompletionChanged(changedItem, isChecked);
                 items.remove(adapterPos);
                 notifyItemRemoved(adapterPos);
+            }
+        });
+
+        holder.itemView.setOnClickListener(v -> {
+            int adapterPos = holder.getBindingAdapterPosition();
+            if (adapterPos != RecyclerView.NO_POSITION && onTodoItemClickListener != null) {
+                onTodoItemClickListener.onTodoItemClick(items.get(adapterPos), adapterPos);
             }
         });
     }

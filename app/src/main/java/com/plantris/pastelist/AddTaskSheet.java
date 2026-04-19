@@ -9,6 +9,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -24,10 +25,27 @@ public final class AddTaskSheet {
         void onTaskAdded(TodoItem item);
     }
 
+    public interface OnTaskSavedListener {
+        void onTaskSaved(TodoItem item, boolean isNewTask);
+    }
+
     public static void show(
             @NonNull AppCompatActivity activity,
             boolean showCompletedOnly,
             OnTaskAddedListener listener
+    ) {
+        show(activity, showCompletedOnly, null, (item, isNewTask) -> {
+            if (isNewTask && listener != null) {
+                listener.onTaskAdded(item);
+            }
+        });
+    }
+
+    public static void show(
+            @NonNull AppCompatActivity activity,
+            boolean showCompletedOnly,
+            @Nullable TodoItem itemToEdit,
+            @Nullable OnTaskSavedListener listener
     ) {
         BottomSheetDialog dialog = new BottomSheetDialog(activity);
         ViewGroup root = activity.findViewById(android.R.id.content);
@@ -39,8 +57,15 @@ public final class AddTaskSheet {
         ImageButton btnAdd = view.findViewById(R.id.atTaskAdd);
         MaterialButton btnOpenDatePicker = view.findViewById(R.id.atTaskOpenDatePicker);
 
-        final String[] selectedDate = {""};
-        final String[] selectedTime = {""};
+        final boolean isEditing = itemToEdit != null;
+        final String[] selectedDate = {isEditing ? safe(itemToEdit.getDate()) : ""};
+        final String[] selectedTime = {isEditing ? safe(itemToEdit.getTime()) : ""};
+
+        if (isEditing) {
+            taskNameInput.setText(safe(itemToEdit.getTitle()));
+            taskDescriptionInput.setText(safe(itemToEdit.getDescription()));
+            btnOpenDatePicker.setText(formatDateTimeLabel(activity, selectedDate[0], selectedTime[0]));
+        }
 
         btnOpenDatePicker.setOnClickListener(v ->
                 DateSheet.show(activity, selectedDate[0], selectedTime[0], (date, time) -> {
@@ -65,13 +90,25 @@ public final class AddTaskSheet {
                 time = "";
             }
 
-            long newRowId;
-            try (DatabaseInsert dbHelper = new DatabaseInsert(activity)) {
-                newRowId = dbHelper.insertEntry(title, description, date, time, false);
-            }
+            if (isEditing) {
+                try (DatabaseInsert dbHelper = new DatabaseInsert(activity)) {
+                    dbHelper.updateEntry(itemToEdit.getId(), title, description, date, time);
+                }
+                if (listener != null) {
+                    listener.onTaskSaved(
+                            new TodoItem(itemToEdit.getId(), title, description, date, time, itemToEdit.isCompleted()),
+                            false
+                    );
+                }
+            } else {
+                long newRowId;
+                try (DatabaseInsert dbHelper = new DatabaseInsert(activity)) {
+                    newRowId = dbHelper.insertEntry(title, description, date, time, false);
+                }
 
-            if (!showCompletedOnly && listener != null) {
-                listener.onTaskAdded(new TodoItem(newRowId, title, description, date, time, false));
+                if (!showCompletedOnly && listener != null) {
+                    listener.onTaskSaved(new TodoItem(newRowId, title, description, date, time, false), true);
+                }
             }
 
             dialog.dismiss();
@@ -97,5 +134,10 @@ public final class AddTaskSheet {
             return date;
         }
         return date + " " + time;
+    }
+
+    @NonNull
+    private static String safe(@Nullable String value) {
+        return value == null ? "" : value;
     }
 }
