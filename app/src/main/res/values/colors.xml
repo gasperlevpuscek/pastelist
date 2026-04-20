@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--Green-->
-    <color name="pastelistGreen">#a7e8b7</color>
+    <!-- Legacy accent kept as neutral to avoid green UI tint -->
+    <color name="pastelistGreen">#51ef61</color>
     <!--Primary app colors-->
-    <color name="backgroundWhite">#FFFFFFFF</color>
-    <color name="secondaryGray">#dbdbdb</color>
-    <color name="textGray">#3a3a3a</color>
+    <color name="backgroundWhite">#f7f7f7</color>
+    <color name="secondaryGray">#6d6d6d</color>
+    <color name="textGray">#2b2b2b</color>
 
 
     <!--Less important colors-->
@@ -13,6 +13,6 @@
     <color name="FEF7FF">#FEF7FF</color>
     <color name="c1c1c1">#c1c1c1</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="lightGray">#737373</color>
+    <color name="lightGray">#FF000000</color>
 
 </resources>

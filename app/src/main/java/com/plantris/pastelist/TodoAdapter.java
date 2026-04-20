@@ -16,6 +16,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
     private final ArrayList<TodoItem> items;
     private final OnTodoCompletionChangedListener onTodoCompletionChangedListener;
     private final OnTodoItemClickListener onTodoItemClickListener;
+    private final OnTodoItemLongClickListener onTodoItemLongClickListener;
 
     public interface OnTodoCompletionChangedListener {
         void onTodoCompletionChanged(TodoItem item, boolean isCompleted);
@@ -25,14 +26,20 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
         void onTodoItemClick(TodoItem item, int position);
     }
 
+    public interface OnTodoItemLongClickListener {
+        void onTodoItemLongClick(TodoItem item, int position, View anchorView);
+    }
+
     public TodoAdapter(
             ArrayList<TodoItem> items,
             OnTodoCompletionChangedListener onTodoCompletionChangedListener,
-            OnTodoItemClickListener onTodoItemClickListener
+            OnTodoItemClickListener onTodoItemClickListener,
+            OnTodoItemLongClickListener onTodoItemLongClickListener
     ) {
         this.items = items;
         this.onTodoCompletionChangedListener = onTodoCompletionChangedListener;
         this.onTodoItemClickListener = onTodoItemClickListener;
+        this.onTodoItemLongClickListener = onTodoItemLongClickListener;
     }
 
     @NonNull
@@ -72,6 +79,15 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
             if (adapterPos != RecyclerView.NO_POSITION && onTodoItemClickListener != null) {
                 onTodoItemClickListener.onTodoItemClick(items.get(adapterPos), adapterPos);
             }
+        });
+
+        holder.itemView.setOnLongClickListener(v -> {
+            int adapterPos = holder.getBindingAdapterPosition();
+            if (adapterPos != RecyclerView.NO_POSITION && onTodoItemLongClickListener != null) {
+                onTodoItemLongClickListener.onTodoItemLongClick(items.get(adapterPos), adapterPos, v);
+                return true;
+            }
+            return false;
         });
     }
 

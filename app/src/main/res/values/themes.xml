@@ -1,8 +1,13 @@
 <resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.Clearlist" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:windowBackground">@color/backgroundWhite</item>
+        <item name="colorSurface">@color/backgroundWhite</item>
+        <item name="colorOnSurface">@color/textGray</item>
+        <item name="colorOnBackground">@color/textGray</item>
+        <item name="colorPrimary">@color/textGray</item>
+        <item name="colorOnPrimary">@color/backgroundWhite</item>
+        <item name="android:textColorPrimary">@color/textGray</item>
     </style>
 
     <style name="Theme.Clearlist" parent="Base.Theme.Clearlist" />

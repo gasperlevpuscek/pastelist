@@ -18,6 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tmp"
+            android:textColor="@color/textGray"
             android:textStyle="bold"
             android:textSize="14sp"
             android:layout_marginEnd="8dp" />
@@ -27,6 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tmp"
+            android:textColor="@color/textGray"
             android:textStyle="bold"
             android:textSize="14sp"
             android:layout_marginEnd="8dp" />
@@ -36,6 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tmp"
+            android:textColor="@color/textGray"
             android:textStyle="bold"
             android:textSize="14sp" />
     </LinearLayout>

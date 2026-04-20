@@ -24,6 +24,7 @@
             android:id="@+id/textViewTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/textGray"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -32,8 +33,8 @@
             android:id="@+id/textViewDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:alpha="0.7" />
+            android:textColor="@color/textGray"
+            android:textSize="14sp" />
 
         <!-- Date and Time row -->
         <LinearLayout
@@ -48,16 +49,16 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="12sp"
-                android:alpha="0.6" />
+                android:textColor="@color/textGray"
+                android:textSize="12sp" />
 
             <!-- Time -->
             <TextView
                 android:id="@+id/textViewTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:alpha="0.6" />
+                android:textColor="@color/textGray"
+                android:textSize="12sp" />
         </LinearLayout>
 
     </LinearLayout>

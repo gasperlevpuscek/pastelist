@@ -10,15 +10,15 @@
     android:background="@color/backgroundWhite">
 
     <EditText
-        android:background="@null"
         android:id="@+id/atTaskName"
-        android:layout_width="match_parent"
+        android:layout_width="379dp"
         android:layout_height="48dp"
-        android:hint="@string/task_name"
-        android:inputType="text"
+        android:autofillHints="Task name"
+        android:background="@null"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:autofillHints="Task name"/>
+        android:hint="@string/task_name"
+        android:inputType="text" />
 
     <EditText
         android:background="@null"

@@ -16,4 +16,11 @@
     <string name="tasks">Tasks</string>
     <string name="tmp">tmp</string>
 
+    <string-array name="upcoming_filter_options">
+        <item>This week</item>
+        <item>This month</item>
+        <item>2 months</item>
+        <item>3 months</item>
+    </string-array>
+
 </resources>
