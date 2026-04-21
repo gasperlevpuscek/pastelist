@@ -47,7 +47,7 @@ public class TaskFragment extends Fragment {
                         dbHelper.updateCompleted(changedItem.getId(), isCompleted);
                     }
                 },
-                this::showEditTaskSheet,
+                this::showEditTaskPopup,
                 this::showDeleteTaskPopup
         );
 
@@ -91,15 +91,55 @@ public class TaskFragment extends Fragment {
         });
     }
 
-    private void showEditTaskSheet(TodoItem item, int position) {
-        if (!(requireActivity() instanceof AppCompatActivity)) {
+    private void showEditTaskPopup(TodoItem item, int position) {
+        if (!(requireActivity() instanceof AppCompatActivity) || getContext() == null) {
             return;
         }
 
-        AddTaskSheet.show((AppCompatActivity) requireActivity(), showCompletedOnly, item, (savedItem, isNewTask) -> {
-            if (!isNewTask && position >= 0 && position < todoList.size()) {
-                todoList.set(position, savedItem);
-                adapter.notifyItemChanged(position);
+        EditTask.show((AppCompatActivity) requireActivity(), item, new EditTask.OnTaskActionListener() {
+            @Override
+            public void onDuplicateRequested(@NonNull TodoItem sourceItem) {
+                if (getContext() == null) {
+                    return;
+                }
+                try (DatabaseInsert dbHelper = new DatabaseInsert(getContext())) {
+                    dbHelper.insertEntry(
+                            sourceItem.getTitle(),
+                            sourceItem.getDescription(),
+                            sourceItem.getDate(),
+                            sourceItem.getTime(),
+                            sourceItem.isCompleted()
+                    );
+                }
+                loadTasks(showCompletedOnly);
+            }
+
+            @Override
+            public void onDeleteConfirmed(@NonNull TodoItem sourceItem) {
+                if (getContext() == null) {
+                    return;
+                }
+                try (DatabaseInsert dbHelper = new DatabaseInsert(getContext())) {
+                    dbHelper.deleteEntry(sourceItem.getId());
+                }
+                loadTasks(showCompletedOnly);
+            }
+
+            @Override
+            public void onSaveRequested(@NonNull TodoItem sourceItem) {
+                if (getContext() == null) {
+                    return;
+                }
+                try (DatabaseInsert dbHelper = new DatabaseInsert(getContext())) {
+                    dbHelper.updateEntry(
+                            sourceItem.getId(),
+                            sourceItem.getTitle(),
+                            sourceItem.getDescription(),
+                            sourceItem.getDate(),
+                            sourceItem.getTime()
+                    );
+                }
+                loadTasks(showCompletedOnly);
             }
         });
     }
@@ -160,4 +200,3 @@ public class TaskFragment extends Fragment {
         }
     }
 }
-
