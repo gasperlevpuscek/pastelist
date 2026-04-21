@@ -16,6 +16,15 @@
     <string name="tasks">Tasks</string>
     <string name="tmp">tmp</string>
 
+    <string name="delete_task">Delete task?</string>
+    <string name="delete_task_no_question_mark">Delete task</string>
+    <string name="keep_it">Keep it</string>
+    <string name="yes_delete">Yes, delete</string>
+
+    <string name="menu">Menu</string>
+
+    <string name="duplicate_task">Duplicate task</string>
+
     <string-array name="upcoming_filter_options">
         <item>This week</item>
         <item>This month</item>

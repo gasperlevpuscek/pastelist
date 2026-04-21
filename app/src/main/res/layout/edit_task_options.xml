@@ -9,12 +9,16 @@
         android:id="@+id/action_duplicate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Duplicate task" />
+        android:text="@string/duplicate_task"
+        android:backgroundTint="@color/secondaryGray"
+        android:textColor="@color/textGray" />
 
     <Button
         android:id="@+id/action_delete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Delete task"
+        android:text="@string/delete_task_no_question_mark"
+        android:backgroundTint="@color/secondaryGray"
+        android:textColor="@color/textGray"
         android:layout_marginTop="8dp" />
 </LinearLayout>

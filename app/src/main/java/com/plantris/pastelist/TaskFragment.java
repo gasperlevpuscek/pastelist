@@ -1,15 +1,8 @@
 package com.plantris.pastelist;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.PopupWindow;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,7 +18,6 @@ public class TaskFragment extends Fragment {
     private final ArrayList<TodoItem> todoList = new ArrayList<>();
     private TodoAdapter adapter;
     private boolean showCompletedOnly = false;
-    private PopupWindow deleteTaskPopup;
 
     public TaskFragment() {
         super(R.layout.task_view);
@@ -48,7 +40,7 @@ public class TaskFragment extends Fragment {
                     }
                 },
                 this::showEditTaskPopup,
-                this::showDeleteTaskPopup
+                null
         );
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -142,61 +134,5 @@ public class TaskFragment extends Fragment {
                 loadTasks(showCompletedOnly);
             }
         });
-    }
-
-    private void showDeleteTaskPopup(TodoItem item, int position, View anchorView) {
-        if (getContext() == null || getView() == null) {
-            return;
-        }
-
-        if (deleteTaskPopup != null && deleteTaskPopup.isShowing()) {
-            deleteTaskPopup.dismiss();
-        }
-
-        ViewGroup root = (ViewGroup) getView();
-        View popupView = LayoutInflater.from(getContext()).inflate(R.layout.delete_task_popup, root, false);
-        deleteTaskPopup = new PopupWindow(
-                popupView,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                true
-        );
-        deleteTaskPopup.setOutsideTouchable(true);
-        deleteTaskPopup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        deleteTaskPopup.setElevation(12f);
-
-        popupView.findViewById(R.id.btnNoKeep).setOnClickListener(v -> deleteTaskPopup.dismiss());
-
-        ImageButton closeButton = popupView.findViewById(R.id.btnClose);
-        closeButton.setOnClickListener(v -> deleteTaskPopup.dismiss());
-
-        popupView.findViewById(R.id.btnYesDelete).setOnClickListener(v -> {
-            if (getContext() == null) {
-                return;
-            }
-            try (DatabaseInsert dbHelper = new DatabaseInsert(getContext())) {
-                dbHelper.deleteEntry(item.getId());
-            }
-            loadTasks(showCompletedOnly);
-            deleteTaskPopup.dismiss();
-        });
-
-        int verticalOffset = Math.round(8 * getResources().getDisplayMetrics().density);
-        int[] anchorLocation = new int[2];
-        anchorView.getLocationOnScreen(anchorLocation);
-        int screenHeight = getResources().getDisplayMetrics().heightPixels;
-        int spaceBelow = screenHeight - (anchorLocation[1] + anchorView.getHeight());
-
-        popupView.measure(
-                View.MeasureSpec.makeMeasureSpec(getResources().getDisplayMetrics().widthPixels, View.MeasureSpec.AT_MOST),
-                View.MeasureSpec.makeMeasureSpec(screenHeight, View.MeasureSpec.AT_MOST)
-        );
-
-        int popupHeight = popupView.getMeasuredHeight();
-        if (spaceBelow >= popupHeight + verticalOffset) {
-            deleteTaskPopup.showAsDropDown(anchorView, 0, verticalOffset, Gravity.START);
-        } else {
-            deleteTaskPopup.showAsDropDown(anchorView, 0, -anchorView.getHeight() - popupHeight - verticalOffset, Gravity.START);
-        }
     }
 }

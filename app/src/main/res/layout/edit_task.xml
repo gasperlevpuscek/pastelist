@@ -2,26 +2,27 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:backgroundTint="@color/backgroundWhite">
 
     <ImageButton
         android:id="@+id/btnTaskMenu"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@android:drawable/ic_menu_more"
-        android:contentDescription="Menu"
+        android:contentDescription="@string/menu"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
+        android:autofillHints="task name"
         android:id="@+id/edTTaskName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:hint="Task name"
+        android:hint="@string/task_name"
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -29,11 +30,12 @@
         app:layout_constraintTop_toBottomOf="@id/btnTaskMenu" />
 
     <EditText
+        android:autofillHints="task description"
         android:id="@+id/edTTaskDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:hint="Description"
+        android:hint="@string/task_description"
         android:inputType="textMultiLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -42,10 +44,15 @@
 
     <Button
         android:id="@+id/btnDate"
+        android:fadingEdge="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/textGray"
+        app:cornerRadius="12dp"
+        android:width="100dp"
         android:layout_marginTop="8dp"
-        android:text="Date"
+        android:backgroundTint="@color/white"
+        android:text="@string/date"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/edTTaskDescription" />
 
@@ -53,9 +60,11 @@
         android:id="@+id/btnSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/pastelistGreen"
+        android:textColor="@color/textGray"
         android:layout_marginTop="64dp"
         android:layout_marginEnd="0dp"
-        android:text="Save"
+        android:text="@string/save"
         app:layout_constraintTop_toBottomOf="@+id/edTTaskDescription"
         app:layout_constraintEnd_toEndOf="parent" />
 

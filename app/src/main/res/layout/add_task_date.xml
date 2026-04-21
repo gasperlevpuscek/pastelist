@@ -62,6 +62,7 @@
         android:layout_height="60dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:textColor="@color/textGray"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
         android:clickable="true"
