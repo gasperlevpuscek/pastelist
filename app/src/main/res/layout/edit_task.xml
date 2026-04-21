@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp"
-    android:backgroundTint="@color/backgroundWhite">
+    android:background="@color/backgroundWhite">
 
     <ImageButton
         android:id="@+id/btnTaskMenu"
@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:hint="@string/task_name"
+        android:textColorHint="@color/hintGray"
         android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -36,6 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:hint="@string/task_description"
+        android:textColorHint="@color/hintGray"
         android:inputType="textMultiLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -49,7 +51,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/textGray"
         app:cornerRadius="12dp"
-        android:width="100dp"
+        android:width="260dp"
         android:layout_marginTop="8dp"
         android:backgroundTint="@color/white"
         android:text="@string/date"

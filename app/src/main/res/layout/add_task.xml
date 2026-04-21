@@ -18,6 +18,7 @@
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:hint="@string/task_name"
+        android:textColorHint="@color/hintGray"
         android:textColor="@color/textGray"
         android:inputType="text" />
 
@@ -27,6 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:hint="@string/task_description"
+        android:textColorHint="@color/hintGray"
         android:inputType="textMultiLine"
         android:layout_marginTop="8dp"
         android:textColor="@color/textGray"

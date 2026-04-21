@@ -7,7 +7,7 @@
     <color name="secondaryGray">#848484</color>
     <color name="textGray">#2b2b2b</color>
     <color name="pastelRed">#FA7979</color>
-
+    <color name="hintGray">#525252</color>
     <!--Less important colors-->
 
     <color name="FEF7FF">#FEF7FF</color>
