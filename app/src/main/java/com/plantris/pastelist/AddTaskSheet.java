@@ -1,6 +1,11 @@
 package com.plantris.pastelist;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -14,6 +19,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
+
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
+import java.util.Locale;
+import java.util.Date;
 
 public final class AddTaskSheet {
 
@@ -154,6 +164,49 @@ public final class AddTaskSheet {
                             true
                     );
                 }
+                // Schedule alarm at the exact task date/time (ignore reminder offset for now)
+                if (!date.isEmpty() && !time.isEmpty()) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
+                    String dateTimeString = date + " " + time;
+
+                    try {
+                        Date parsed = sdf.parse(dateTimeString);
+                        if (parsed == null) {
+                            Log.e("REMINDER", "Parsed date is null for: " + dateTimeString);
+                        } else {
+                            long taskMillis = parsed.getTime();
+
+                            if (taskMillis > System.currentTimeMillis()) {
+                                Intent intent = new Intent(activity, ReminderReceiver.class);
+
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                                        activity,
+                                        (int) newRowId, // use the new DB id as a (mostly) unique request code
+                                        intent,
+                                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                                );
+
+                                AlarmManager alarmManager = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
+                                if (alarmManager != null) {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, taskMillis, pendingIntent);
+                                    } else {
+                                        alarmManager.set(AlarmManager.RTC_WAKEUP, taskMillis, pendingIntent);
+                                    }
+                                    Log.d("REMINDER", "Alarm scheduled for " + taskMillis + " (ms since epoch)");
+                                } else {
+                                    Log.w("REMINDER", "Could not get AlarmManager from context");
+                                }
+                            } else {
+                                Log.d("REMINDER", "Task time is in the past; not scheduling.");
+                            }
+                        }
+                    } catch (ParseException e) {
+                        Log.e("REMINDER", "Failed to parse date/time for alarm: " + dateTimeString, e);
+                    }
+                }
+
+
             }
 
             dialog.dismiss();
@@ -186,3 +239,5 @@ public final class AddTaskSheet {
         return value == null ? "" : value;
     }
 }
+
+

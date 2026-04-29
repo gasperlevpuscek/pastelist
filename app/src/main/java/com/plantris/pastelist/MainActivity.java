@@ -1,11 +1,26 @@
 package com.plantris.pastelist;
 
+import static java.security.AccessController.getContext;
+
+import android.Manifest;
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.button.MaterialButton;
+
+import java.time.LocalDate;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,5 +37,31 @@ public class MainActivity extends AppCompatActivity {
 
         btnTasks.setOnClickListener(v -> viewPager.setCurrentItem(0, true));
         btnUpcoming.setOnClickListener(v -> viewPager.setCurrentItem(1, true));
+
+
+        createNotificationChannel();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(
+                    new String[]{android.Manifest.permission.POST_NOTIFICATIONS},
+                    1
+            );
+        }
+
+
+    }
+
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    "task_reminders",
+                    "Task Reminders",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
     }
 }

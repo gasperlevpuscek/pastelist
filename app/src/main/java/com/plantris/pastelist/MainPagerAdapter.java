@@ -23,6 +23,9 @@ public class MainPagerAdapter extends FragmentStateAdapter {
         return new TaskFragment();
     }
 
+
+
+
     @Override
     public int getItemCount() {
         return 3;

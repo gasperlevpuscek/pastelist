@@ -50,6 +50,11 @@ public class TaskFragment extends Fragment {
 
         view.findViewById(R.id.add_task_button).setOnClickListener(v -> showAddTaskSheet());
         view.findViewById(R.id.switch_views).setOnClickListener(v -> loadTasks(!showCompletedOnly));
+
+
+
+
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
