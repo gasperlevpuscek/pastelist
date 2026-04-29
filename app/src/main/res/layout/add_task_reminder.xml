@@ -1,0 +1,43 @@
+<RadioGroup android:id="@+id/reminderRadioGroup"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RadioButton
+        android:id="@+id/reminder_none"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No reminder" />
+
+    <RadioButton
+        android:id="@+id/reminder_due_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="At due time" />
+
+    <RadioButton
+        android:id="@+id/reminder_1_hour"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1 hour before" />
+
+    <RadioButton
+        android:id="@+id/reminder_1_day"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1 day before" />
+
+    <RadioButton
+        android:id="@+id/reminder_custom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Custom..." />
+
+    <Button
+        android:id="@+id/btnSaveReminder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="save"/>
+
+</RadioGroup>

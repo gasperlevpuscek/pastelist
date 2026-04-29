@@ -56,10 +56,12 @@ public final class AddTaskSheet {
         EditText taskDescriptionInput = view.findViewById(R.id.atTaskDescription);
         ImageButton btnAdd = view.findViewById(R.id.atTaskAdd);
         MaterialButton btnOpenDatePicker = view.findViewById(R.id.atTaskOpenDatePicker);
+        MaterialButton btnOpenReminderPicker = view.findViewById(R.id.atTaskReminder);
 
         final boolean isEditing = itemToEdit != null;
         final String[] selectedDate = {isEditing ? safe(itemToEdit.getDate()) : ""};
         final String[] selectedTime = {isEditing ? safe(itemToEdit.getTime()) : ""};
+        final Integer[] selectedReminderMinutesBefore = {isEditing ? itemToEdit.getReminderMinutesBefore() : null};
 
         if (isEditing) {
             taskNameInput.setText(safe(itemToEdit.getTitle()));
@@ -75,11 +77,21 @@ public final class AddTaskSheet {
                 })
         );
 
+         btnOpenReminderPicker.setOnClickListener(v ->
+                ReminderSheet.showReminder(activity, reminderMinutesBefore -> {
+                    selectedReminderMinutesBefore[0] = reminderMinutesBefore;
+                })
+         );
+
+
+
         btnAdd.setOnClickListener(v -> {
             String title = taskNameInput.getText().toString().trim();
             String description = taskDescriptionInput.getText().toString().trim();
             String date = selectedDate[0];
             String time = selectedTime[0];
+
+
 
             if (title.isEmpty()) {
                 Toast.makeText(activity, "Title must not be empty", Toast.LENGTH_SHORT).show();
@@ -92,22 +104,55 @@ public final class AddTaskSheet {
 
             if (isEditing) {
                 try (DatabaseInsert dbHelper = new DatabaseInsert(activity)) {
-                    dbHelper.updateEntry(itemToEdit.getId(), title, description, date, time);
+                    dbHelper.updateEntry(
+                            itemToEdit.getId(),
+                            title,
+                            description,
+                            date,
+                            time,
+                            selectedReminderMinutesBefore[0]
+                    );
                 }
                 if (listener != null) {
                     listener.onTaskSaved(
-                            new TodoItem(itemToEdit.getId(), title, description, date, time, itemToEdit.isCompleted()),
+                            new TodoItem(
+                                    itemToEdit.getId(),
+                                    title,
+                                    description,
+                                    date,
+                                    time,
+                                    selectedReminderMinutesBefore[0],
+                                    itemToEdit.isCompleted()
+                            ),
                             false
                     );
                 }
             } else {
                 long newRowId;
                 try (DatabaseInsert dbHelper = new DatabaseInsert(activity)) {
-                    newRowId = dbHelper.insertEntry(title, description, date, time, false);
+                    newRowId = dbHelper.insertEntry(
+                            title,
+                            description,
+                            date,
+                            time,
+                            false,
+                            selectedReminderMinutesBefore[0]
+                    );
                 }
 
                 if (!showCompletedOnly && listener != null) {
-                    listener.onTaskSaved(new TodoItem(newRowId, title, description, date, time, false), true);
+                    listener.onTaskSaved(
+                            new TodoItem(
+                                    newRowId,
+                                    title,
+                                    description,
+                                    date,
+                                    time,
+                                    selectedReminderMinutesBefore[0],
+                                    false
+                            ),
+                            true
+                    );
                 }
             }
 

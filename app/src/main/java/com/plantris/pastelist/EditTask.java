@@ -67,6 +67,7 @@ public final class EditTask {
                     taskDescriptionInput.getText().toString().trim(),
                     selectedDate[0],
                     selectedTime[0],
+                    item.getReminderMinutesBefore(),
                     item.isCompleted()
             );
             listener.onSaveRequested(updatedItem);

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class DatabaseInsert extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "PasteList.db";
 
     public DatabaseInsert(Context context) {
@@ -39,10 +39,21 @@ public class DatabaseInsert extends SQLiteOpenHelper {
     }
 
     public long insertEntry(String title, String description, String date, String time) {
-        return insertEntry(title, description, date, time, false);
+        return insertEntry(title, description, date, time, false, null);
     }
 
     public long insertEntry(String title, String description, String date, String time, boolean isCompleted) {
+        return insertEntry(title, description, date, time, isCompleted, null);
+    }
+
+    public long insertEntry(
+            String title,
+            String description,
+            String date,
+            String time,
+            boolean isCompleted,
+            Integer reminderMinutesBefore
+    ) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -51,6 +62,11 @@ public class DatabaseInsert extends SQLiteOpenHelper {
         values.put(DatabaseManager.FeedEntry.COLUMN_NAME_DATE, date);
         values.put(DatabaseManager.FeedEntry.COLUMN_NAME_TIME, time);
         values.put(DatabaseManager.FeedEntry.COLUMN_NAME_COMPLETED, isCompleted ? 1 : 0);
+        if (reminderMinutesBefore == null) {
+            values.putNull(DatabaseManager.FeedEntry.COLUMN_UNTIL_REMINDER);
+        } else {
+            values.put(DatabaseManager.FeedEntry.COLUMN_UNTIL_REMINDER, reminderMinutesBefore);
+        }
 
         return db.insert(DatabaseManager.FeedEntry.TABLE_NAME, null, values);
     }
@@ -68,6 +84,17 @@ public class DatabaseInsert extends SQLiteOpenHelper {
     }
 
     public int updateEntry(long id, String title, String description, String date, String time) {
+        return updateEntry(id, title, description, date, time, null);
+    }
+
+    public int updateEntry(
+            long id,
+            String title,
+            String description,
+            String date,
+            String time,
+            Integer reminderMinutesBefore
+    ) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -75,6 +102,11 @@ public class DatabaseInsert extends SQLiteOpenHelper {
         values.put(DatabaseManager.FeedEntry.COLUMN_NAME_DESCRIPTION, description);
         values.put(DatabaseManager.FeedEntry.COLUMN_NAME_DATE, date);
         values.put(DatabaseManager.FeedEntry.COLUMN_NAME_TIME, time);
+        if (reminderMinutesBefore == null) {
+            values.putNull(DatabaseManager.FeedEntry.COLUMN_UNTIL_REMINDER);
+        } else {
+            values.put(DatabaseManager.FeedEntry.COLUMN_UNTIL_REMINDER, reminderMinutesBefore);
+        }
 
         String selection = DatabaseManager.FeedEntry._ID + " = ?";
         String[] selectionArgs = {String.valueOf(id)};
@@ -99,6 +131,7 @@ public class DatabaseInsert extends SQLiteOpenHelper {
                 DatabaseManager.FeedEntry.COLUMN_NAME_DESCRIPTION,
                 DatabaseManager.FeedEntry.COLUMN_NAME_DATE,
                 DatabaseManager.FeedEntry.COLUMN_NAME_TIME,
+                DatabaseManager.FeedEntry.COLUMN_UNTIL_REMINDER,
                 DatabaseManager.FeedEntry.COLUMN_NAME_COMPLETED
         };
 
@@ -128,11 +161,16 @@ public class DatabaseInsert extends SQLiteOpenHelper {
             String time = cursor.getString(
                     cursor.getColumnIndexOrThrow(DatabaseManager.FeedEntry.COLUMN_NAME_TIME)
             );
+            Integer reminderMinutesBefore = cursor.isNull(
+                    cursor.getColumnIndexOrThrow(DatabaseManager.FeedEntry.COLUMN_UNTIL_REMINDER)
+            ) ? null : cursor.getInt(
+                    cursor.getColumnIndexOrThrow(DatabaseManager.FeedEntry.COLUMN_UNTIL_REMINDER)
+            );
             boolean isCompleted = cursor.getInt(
                     cursor.getColumnIndexOrThrow(DatabaseManager.FeedEntry.COLUMN_NAME_COMPLETED)
             ) == 1;
 
-            items.add(new TodoItem(id, title, subtitle, date, time, isCompleted));
+            items.add(new TodoItem(id, title, subtitle, date, time, reminderMinutesBefore, isCompleted));
         }
 
         cursor.close();
