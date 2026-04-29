@@ -100,7 +100,8 @@ public class TaskFragment extends Fragment {
                             sourceItem.getDescription(),
                             sourceItem.getDate(),
                             sourceItem.getTime(),
-                            sourceItem.isCompleted()
+                            sourceItem.isCompleted(),
+                            sourceItem.getReminderMinutesBefore()
                     );
                 }
                 loadTasks(showCompletedOnly);
