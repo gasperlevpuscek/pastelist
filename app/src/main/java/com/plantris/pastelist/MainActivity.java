@@ -65,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
             );
 
             NotificationManager manager = getSystemService(NotificationManager.class);
+            if (manager == null) {
+                Log.w("MainActivity", "NotificationManager unavailable; channel not created");
+                return;
+            }
             manager.createNotificationChannel(channel);
         }
     }

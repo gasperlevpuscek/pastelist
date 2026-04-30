@@ -166,7 +166,7 @@ public final class AddTaskSheet {
                     );
                 }
                 if (!date.isEmpty() && !time.isEmpty()) {
-                    scheduleReminder(activity, date + " " + time);
+                    scheduleReminder(activity, date + " " + time, selectedReminderMinutesBefore[0]);
                 }
             }
             dialog.dismiss();
@@ -200,14 +200,18 @@ public final class AddTaskSheet {
     }
 
     @SuppressLint({"ExactAlarm", "ScheduleExactAlarm"})
-    private static void scheduleReminder(Context context, String dateText) {
+    private static void scheduleReminder(Context context, String dateText, @Nullable Integer reminderMinutesBefore) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
             Date date = sdf.parse(dateText);
 
             if (date == null) return;
 
-            long triggerTime = date.getTime();
+            if (reminderMinutesBefore == null) {
+                return;
+            }
+
+            long triggerTime = date.getTime() - (reminderMinutesBefore * 60_000L);
 
             if (triggerTime <= System.currentTimeMillis()) {
                 return;
