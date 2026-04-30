@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
         btnTasks.setOnClickListener(v -> viewPager.setCurrentItem(0, true));
         btnUpcoming.setOnClickListener(v -> viewPager.setCurrentItem(1, true));
 
-
         createNotificationChannel();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -51,10 +50,7 @@ public class MainActivity extends AppCompatActivity {
                 );
             }
         }
-
-
     }
-
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

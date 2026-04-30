@@ -25,6 +25,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 public final class AddTaskSheet {
 
@@ -166,7 +167,13 @@ public final class AddTaskSheet {
                     );
                 }
                 if (!date.isEmpty() && !time.isEmpty()) {
-                    scheduleReminder(activity, date + " " + time, selectedReminderMinutesBefore[0]);
+                    scheduleReminder(
+                            activity,
+                            title,
+                            date,
+                            time,
+                            selectedReminderMinutesBefore[0]
+                    );
                 }
             }
             dialog.dismiss();
@@ -200,28 +207,44 @@ public final class AddTaskSheet {
     }
 
     @SuppressLint({"ExactAlarm", "ScheduleExactAlarm"})
-    private static void scheduleReminder(Context context, String dateText, @Nullable Integer reminderMinutesBefore) {
+    private static void scheduleReminder(
+            Context context,
+            String taskTitle,
+            String date,
+            String time,
+            @Nullable Integer reminderMinutesBefore
+    ) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
-            Date date = sdf.parse(dateText);
-
-            if (date == null) return;
-
-            if (reminderMinutesBefore == null) {
+            if (reminderMinutesBefore == null || date.isEmpty() || time.isEmpty()) {
                 return;
             }
 
-            long triggerTime = date.getTime() - (reminderMinutesBefore * 60_000L);
+            String dateText = date + " " + time;
+            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
+            Date parsedDate = sdf.parse(dateText);
+
+            if (parsedDate == null) {
+                return;
+            }
+
+            long triggerTime = parsedDate.getTime() - (reminderMinutesBefore * 60_000L);
 
             if (triggerTime <= System.currentTimeMillis()) {
                 return;
             }
 
-            Intent intent = new Intent(context, ReminderReceiver.class);
+            int requestCode = Objects.hash(taskTitle, date, time, reminderMinutesBefore);
+            Intent intent = new Intent(context, ReminderReceiver.class)
+                    .setAction(TAG + ".REMINDER_" + requestCode)
+                    .putExtra("extra_task_title", taskTitle)
+                    .putExtra("extra_due_date", date)
+                    .putExtra("extra_due_time", time)
+                    .putExtra("extra_reminder_minutes_before", reminderMinutesBefore)
+                    .putExtra("extra_notification_id", requestCode);
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     context,
-                    (int) triggerTime,
+                    requestCode,
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
             );
@@ -246,7 +269,6 @@ public final class AddTaskSheet {
                         pendingIntent
                 );
             }
-
         } catch (SecurityException e) {
             Log.e(TAG, "Failed to schedule reminder due to alarm permission restrictions", e);
         } catch (ParseException e) {
