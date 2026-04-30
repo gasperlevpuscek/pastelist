@@ -1,5 +1,6 @@
 package com.plantris.pastelist;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -20,16 +21,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
-import java.util.Locale;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public final class AddTaskSheet {
+
+    private static final String TAG = "AddTaskSheet";
 
     private AddTaskSheet() {
         // Utility class.
     }
+
+
 
     public interface OnTaskAddedListener {
         void onTaskAdded(TodoItem item);
@@ -87,12 +92,9 @@ public final class AddTaskSheet {
                 })
         );
 
-         btnOpenReminderPicker.setOnClickListener(v ->
-                ReminderSheet.showReminder(activity, reminderMinutesBefore -> {
-                    selectedReminderMinutesBefore[0] = reminderMinutesBefore;
-                })
-         );
-
+        btnOpenReminderPicker.setOnClickListener(v ->
+                ReminderSheet.showReminder(activity, reminderMinutesBefore -> selectedReminderMinutesBefore[0] = reminderMinutesBefore)
+        );
 
 
         btnAdd.setOnClickListener(v -> {
@@ -100,7 +102,6 @@ public final class AddTaskSheet {
             String description = taskDescriptionInput.getText().toString().trim();
             String date = selectedDate[0];
             String time = selectedTime[0];
-
 
 
             if (title.isEmpty()) {
@@ -164,51 +165,10 @@ public final class AddTaskSheet {
                             true
                     );
                 }
-                // Schedule alarm at the exact task date/time (ignore reminder offset for now)
                 if (!date.isEmpty() && !time.isEmpty()) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
-                    String dateTimeString = date + " " + time;
-
-                    try {
-                        Date parsed = sdf.parse(dateTimeString);
-                        if (parsed == null) {
-                            Log.e("REMINDER", "Parsed date is null for: " + dateTimeString);
-                        } else {
-                            long taskMillis = parsed.getTime();
-
-                            if (taskMillis > System.currentTimeMillis()) {
-                                Intent intent = new Intent(activity, ReminderReceiver.class);
-
-                                PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                                        activity,
-                                        (int) newRowId, // use the new DB id as a (mostly) unique request code
-                                        intent,
-                                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-                                );
-
-                                AlarmManager alarmManager = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
-                                if (alarmManager != null) {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, taskMillis, pendingIntent);
-                                    } else {
-                                        alarmManager.set(AlarmManager.RTC_WAKEUP, taskMillis, pendingIntent);
-                                    }
-                                    Log.d("REMINDER", "Alarm scheduled for " + taskMillis + " (ms since epoch)");
-                                } else {
-                                    Log.w("REMINDER", "Could not get AlarmManager from context");
-                                }
-                            } else {
-                                Log.d("REMINDER", "Task time is in the past; not scheduling.");
-                            }
-                        }
-                    } catch (ParseException e) {
-                        Log.e("REMINDER", "Failed to parse date/time for alarm: " + dateTimeString, e);
-                    }
+                    scheduleReminder(activity, date + " " + time);
                 }
-
-
             }
-
             dialog.dismiss();
         });
 
@@ -238,6 +198,63 @@ public final class AddTaskSheet {
     private static String safe(@Nullable String value) {
         return value == null ? "" : value;
     }
-}
 
+    @SuppressLint({"ExactAlarm", "ScheduleExactAlarm"})
+    private static void scheduleReminder(Context context, String dateText) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
+            Date date = sdf.parse(dateText);
+
+            if (date == null) return;
+
+            long triggerTime = date.getTime();
+
+            if (triggerTime <= System.currentTimeMillis()) {
+                return;
+            }
+
+            Intent intent = new Intent(context, ReminderReceiver.class);
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    context,
+                    (int) triggerTime,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            if (alarmManager == null) {
+                Log.w(TAG, "AlarmManager unavailable; reminder not scheduled");
+                return;
+            }
+
+            if (canScheduleExactAlarms(alarmManager)) {
+                alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        triggerTime,
+                        pendingIntent
+                );
+            } else {
+                Log.w(TAG, "Exact alarm access unavailable; using inexact fallback");
+                alarmManager.setAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        triggerTime,
+                        pendingIntent
+                );
+            }
+
+        } catch (SecurityException e) {
+            Log.e(TAG, "Failed to schedule reminder due to alarm permission restrictions", e);
+        } catch (ParseException e) {
+            Log.e(TAG, "Failed to parse reminder date/time", e);
+        }
+    }
+
+    private static boolean canScheduleExactAlarms(AlarmManager alarmManager) {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms();
+    }
+
+
+
+}
 
