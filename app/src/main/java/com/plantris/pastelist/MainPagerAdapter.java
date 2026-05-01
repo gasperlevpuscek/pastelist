@@ -7,6 +7,9 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 public class MainPagerAdapter extends FragmentStateAdapter {
 
+    private TaskFragment taskFragment;
+    private UpcomingFragment upcomingFragment;
+
     public MainPagerAdapter(@NonNull AppCompatActivity activity) {
         super(activity);
     }
@@ -15,12 +18,20 @@ public class MainPagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         if (position == 1) {
-            return new UpcomingFragment();
+            upcomingFragment = new UpcomingFragment();
+            if (taskFragment != null) {
+                upcomingFragment.setTaskFragment(taskFragment);
+            }
+            return upcomingFragment;
         }
         if (position == 2) {
             return new SettingsFragment();
         }
-        return new TaskFragment();
+        taskFragment = new TaskFragment();
+        if (upcomingFragment != null) {
+            upcomingFragment.setTaskFragment(taskFragment);
+        }
+        return taskFragment;
     }
 
 

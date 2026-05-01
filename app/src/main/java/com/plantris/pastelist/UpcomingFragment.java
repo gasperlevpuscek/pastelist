@@ -32,6 +32,11 @@ public class UpcomingFragment extends Fragment {
 
     private UpcomingDateAdapter upcomingDateAdapter;
     private int selectedRangeDays = 7;
+    private TaskFragment taskFragment;
+
+    public void setTaskFragment(TaskFragment fragment) {
+        this.taskFragment = fragment;
+    }
 
     public UpcomingFragment() {
         super(R.layout.upcoming_task_view);
@@ -43,6 +48,15 @@ public class UpcomingFragment extends Fragment {
 
         RecyclerView upcomingTaskRecyclerView = view.findViewById(R.id.upcomingTaskRecyclerView);
         upcomingDateAdapter = new UpcomingDateAdapter();
+        if (getContext() != null) {
+            upcomingDateAdapter.setDatabaseInsert(new DatabaseInsert(getContext()));
+        }
+        upcomingDateAdapter.setOnTaskCompletedListener(() -> {
+            loadUpcomingDays(selectedRangeDays);
+            if (taskFragment != null) {
+                taskFragment.reloadTasks();
+            }
+        });
         upcomingTaskRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         upcomingTaskRecyclerView.setAdapter(upcomingDateAdapter);
 

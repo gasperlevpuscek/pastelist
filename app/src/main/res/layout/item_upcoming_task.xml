@@ -6,6 +6,15 @@
     android:paddingTop="4dp"
     android:paddingBottom="4dp">
 
+    <CheckBox
+        android:id="@+id/upcomingTaskViewCompleted"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="5dp">
+    </CheckBox>
+
     <TextView
         android:id="@+id/upcomingViewTaskName"
         android:layout_width="0dp"
@@ -13,6 +22,7 @@
         android:layout_weight="1"
         android:text="@string/tmp"
         android:textColor="@color/textGray"
+        android:layout_marginTop="1dp"
         android:textSize="16sp" />
 
     <TextView
@@ -20,8 +30,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:width="100dp"
+        android:layout_marginTop="1dp"
         android:text="@string/tmp"
         android:textColor="@color/textGray"
-        android:textSize="13sp" />
+        android:textSize="16sp" />
 
 </LinearLayout>

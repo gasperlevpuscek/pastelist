@@ -3,6 +3,7 @@ package com.plantris.pastelist;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -21,9 +22,15 @@ public class UpcomingDateAdapter extends RecyclerView.Adapter<UpcomingDateAdapte
 
     private final ArrayList<LocalDate> upcomingDates = new ArrayList<>();
     private final Map<LocalDate, List<TodoItem>> tasksByDate = new java.util.HashMap<>();
-    private final DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("EEE", Locale.getDefault());
+    private final DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("EEEE", Locale.getDefault());
     private final DateTimeFormatter numberFormatter = DateTimeFormatter.ofPattern("dd", Locale.getDefault());
     private final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMM", Locale.getDefault());
+    private DatabaseInsert databaseInsert;
+    private OnTaskCompletedListener onTaskCompletedListener;
+
+    public interface OnTaskCompletedListener {
+        void onTaskCompleted();
+    }
 
     public void setData(@NonNull List<LocalDate> dates, @NonNull Map<LocalDate, List<TodoItem>> groupedTasks) {
         upcomingDates.clear();
@@ -31,6 +38,14 @@ public class UpcomingDateAdapter extends RecyclerView.Adapter<UpcomingDateAdapte
         tasksByDate.clear();
         tasksByDate.putAll(groupedTasks);
         notifyDataSetChanged();
+    }
+
+    public void setDatabaseInsert(DatabaseInsert databaseInsert) {
+        this.databaseInsert = databaseInsert;
+    }
+
+    public void setOnTaskCompletedListener(OnTaskCompletedListener listener) {
+        this.onTaskCompletedListener = listener;
     }
 
     @NonNull
@@ -45,9 +60,9 @@ public class UpcomingDateAdapter extends RecyclerView.Adapter<UpcomingDateAdapte
     public void onBindViewHolder(@NonNull UpcomingDateViewHolder holder, int position) {
         LocalDate date = upcomingDates.get(position);
 
-        holder.upcomingViewDay.setText(date.format(dayFormatter).toUpperCase(Locale.getDefault()));
+        holder.upcomingViewDay.setText(date.format(dayFormatter)+",");
         holder.upcomingViewDateNumber.setText(date.format(numberFormatter));
-        holder.upcomingViewMonth.setText(date.format(monthFormatter).toUpperCase(Locale.getDefault()));
+        holder.upcomingViewMonth.setText(date.format(monthFormatter));
         holder.upcomingTaskContainer.removeAllViews();
 
         List<TodoItem> tasksForDate = tasksByDate.getOrDefault(date, Collections.emptyList());
@@ -56,10 +71,23 @@ public class UpcomingDateAdapter extends RecyclerView.Adapter<UpcomingDateAdapte
             View taskView = inflater.inflate(R.layout.item_upcoming_task, holder.upcomingTaskContainer, false);
             TextView taskName = taskView.findViewById(R.id.upcomingViewTaskName);
             TextView taskTime = taskView.findViewById(R.id.upcomingViewTaskTime);
+            CheckBox taskCheckbox = taskView.findViewById(R.id.upcomingTaskViewCompleted);
 
             taskName.setText(task.getTitle());
             String time = task.getTime() == null ? "" : task.getTime();
             taskTime.setText(time);
+            taskCheckbox.setChecked(task.isCompleted());
+
+            // Set checkbox listener to update database
+            taskCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (databaseInsert != null) {
+                    databaseInsert.updateCompleted(task.getId(), isChecked);
+                    task.setCompleted(isChecked);
+                    if (onTaskCompletedListener != null) {
+                        onTaskCompletedListener.onTaskCompleted();
+                    }
+                }
+            });
 
             holder.upcomingTaskContainer.addView(taskView);
         }

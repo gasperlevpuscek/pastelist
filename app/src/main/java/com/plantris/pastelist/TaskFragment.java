@@ -6,6 +6,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,13 +32,30 @@ public class TaskFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         adapter = new TodoAdapter(
                 todoList,
-                (changedItem, isCompleted) -> {
+                (changedItem, isCompleted, position) -> {
                     if (getContext() == null) {
                         return;
                     }
+                    // Mark as completed in DB (flag only)
                     try (DatabaseInsert dbHelper = new DatabaseInsert(getContext())) {
                         dbHelper.updateCompleted(changedItem.getId(), isCompleted);
                     }
+
+                    // Show snackbar with Undo action. If undone, mark not completed and restore in list.
+                    View parentView = requireView();
+                    final int removedPos = position;
+                    final TodoItem removedItem = changedItem;
+                    Snackbar.make(parentView, "Task completed", Snackbar.LENGTH_LONG)
+                            .setAction("Undo", v -> {
+                                if (getContext() == null) return;
+                                try (DatabaseInsert dbHelper = new DatabaseInsert(getContext())) {
+                                    dbHelper.updateCompleted(removedItem.getId(), false);
+                                }
+                                // restore in-memory list and notify adapter
+                                todoList.add(removedPos, removedItem);
+                                adapter.notifyItemInserted(removedPos);
+                            })
+                            .show();
                 },
                 this::showEditTaskPopup,
                 null
@@ -75,6 +93,10 @@ public class TaskFragment extends Fragment {
         }
 
         adapter.notifyDataSetChanged();
+    }
+
+    public void reloadTasks() {
+        loadTasks(showCompletedOnly);
     }
 
     private void showAddTaskSheet() {

@@ -22,7 +22,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
     private final OnTodoItemLongClickListener onTodoItemLongClickListener;
 
     public interface OnTodoCompletionChangedListener {
-        void onTodoCompletionChanged(TodoItem item, boolean isCompleted);
+        void onTodoCompletionChanged(TodoItem item, boolean isCompleted, int position);
     }
 
     public interface OnTodoItemClickListener {
@@ -71,7 +71,11 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
             if (adapterPos != RecyclerView.NO_POSITION) {
                 TodoItem changedItem = items.get(adapterPos);
                 changedItem.setCompleted(isChecked);
-                onTodoCompletionChangedListener.onTodoCompletionChanged(changedItem, isChecked);
+                // notify parent (will update DB and show undo)
+                if (onTodoCompletionChangedListener != null) {
+                    onTodoCompletionChangedListener.onTodoCompletionChanged(changedItem, isChecked, adapterPos);
+                }
+                // remove from UI list
                 items.remove(adapterPos);
                 notifyItemRemoved(adapterPos);
             }

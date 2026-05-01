@@ -128,6 +128,17 @@ public class DatabaseInsert extends SQLiteOpenHelper {
         return db.delete(DatabaseManager.FeedEntry.TABLE_NAME, selection, selectionArgs);
     }
 
+    /**
+     * Permanently delete entries that have been marked completed.
+     * This is intended to be called on app stop/close to clean up completed items.
+     */
+    public int deleteCompletedEntries() {
+        SQLiteDatabase db = getWritableDatabase();
+        String selection = DatabaseManager.FeedEntry.COLUMN_NAME_COMPLETED + " = ?";
+        String[] selectionArgs = {"1"};
+        return db.delete(DatabaseManager.FeedEntry.TABLE_NAME, selection, selectionArgs);
+    }
+
     public ArrayList<TodoItem> readAllEntries() {
         ArrayList<TodoItem> items = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
