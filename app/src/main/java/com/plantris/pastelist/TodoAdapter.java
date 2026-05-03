@@ -3,15 +3,17 @@ package com.plantris.pastelist;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
@@ -62,6 +64,17 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
         holder.textViewDate.setText(item.getDate());
         holder.textViewTime.setText(item.getTime());
 
+        // Check if task is overdue and apply appropriate border and text
+        boolean overdue = isOverdue(item);
+        if (overdue) {
+            holder.textViewOverdue.setText("OVERDUE");
+            holder.textViewOverdue.setTextColor(holder.itemView.getContext().getColor(android.R.color.holo_red_dark));
+            holder.itemView.setBackground(AppCompatResources.getDrawable(holder.itemView.getContext(), R.drawable.item_border_overdue));
+        } else {
+            holder.textViewOverdue.setText("");
+            holder.itemView.setBackground(AppCompatResources.getDrawable(holder.itemView.getContext(), R.drawable.item_border));
+        }
+
         holder.checkBoxDone.setOnCheckedChangeListener(null);
         holder.checkBoxDone.setChecked(item.isCompleted());
 
@@ -103,12 +116,36 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
         return items.size();
     }
 
+    /**
+     * Check if a task date is in the past (overdue).
+     * Expected date format: "yyyy-MM-dd" or "dd/MM/yyyy"
+     */
+    private boolean isOverdue(TodoItem item) {
+        if (item.isCompleted()) return false;
+        if (item.getDate() == null || item.getTime() == null) return false;
+
+        try {
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d.M.yyyy");
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+            LocalDate date = LocalDate.parse(item.getDate(), dateFormatter);
+            LocalTime time = LocalTime.parse(item.getTime(), timeFormatter);
+
+            LocalDateTime taskDateTime = LocalDateTime.of(date, time);
+
+            return taskDateTime.isBefore(LocalDateTime.now());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public static class TodoVH extends RecyclerView.ViewHolder {
         final CheckBox checkBoxDone;
         final TextView textViewTitle;
         final TextView textViewDescription;
         final TextView textViewDate;
         final TextView textViewTime;
+        final TextView textViewOverdue;
 
         TodoVH(@NonNull View itemView) {
             super(itemView);
@@ -117,6 +154,7 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
             textViewDescription = itemView.findViewById(R.id.textViewDescription);
             textViewDate = itemView.findViewById(R.id.textViewDate);
             textViewTime = itemView.findViewById(R.id.textViewTime);
+            textViewOverdue = itemView.findViewById(R.id.textViewOverdue);
 
         }
     }

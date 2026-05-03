@@ -22,21 +22,32 @@
         <!-- Title -->
         <TextView
             android:id="@+id/textViewTitle"
-            android:layout_width="match_parent"
+            android:layout_width="197dp"
             android:layout_height="wrap_content"
             android:textColor="@color/textGray"
             android:textSize="18sp"
             android:textStyle="bold" />
 
         <!-- Description -->
+
         <TextView
             android:id="@+id/textViewDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/textGray"
-            android:textSize="14sp" />
+            android:textSize="11sp"
+            />
 
+        <TextView
+            android:id="@+id/textViewOverdue"
+            android:layout_width="126dp"
+            android:layout_height="12dp"
+            android:textColor="@color/pastelRed"
+            android:textSize="18sp"
+            android:textStyle="bold" />
         <!-- Date and Time row -->
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,7 +57,7 @@
             <!-- Date -->
             <TextView
                 android:id="@+id/textViewDate"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textColor="@color/textGray"

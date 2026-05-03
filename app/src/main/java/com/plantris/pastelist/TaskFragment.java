@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class TaskFragment extends Fragment {
@@ -92,7 +94,45 @@ public class TaskFragment extends Fragment {
             }
         }
 
+        // Sort tasks by date in ascending order
+        sortTasksByDate();
+
         adapter.notifyDataSetChanged();
+    }
+
+    private void sortTasksByDate() {
+        todoList.sort((item1, item2) -> {
+            LocalDate date1 = parseDate(item1.getDate());
+            LocalDate date2 = parseDate(item2.getDate());
+
+            // Handle null cases (unparseable dates go to the end)
+            if (date1 == null && date2 == null) {
+                return 0;
+            }
+            if (date1 == null) {
+                return 1;
+            }
+            if (date2 == null) {
+                return -1;
+            }
+
+            // Compare dates
+            return date1.compareTo(date2);
+        });
+    }
+
+    private LocalDate parseDate(String dateStr) {
+        try {
+            // Try yyyy-MM-dd format
+            return LocalDate.parse(dateStr, DateTimeFormatter.ISO_LOCAL_DATE);
+        } catch (Exception e1) {
+            try {
+                // Try dd/MM/yyyy format
+                return LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+            } catch (Exception e2) {
+                return null;
+            }
+        }
     }
 
     public void reloadTasks() {
