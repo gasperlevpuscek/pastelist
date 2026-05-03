@@ -7,14 +7,17 @@
     <color name="backgroundWhite">#f7f7f7</color>
     <color name="secondaryGray">#848484</color>
     <color name="textGray">#2b2b2b</color>
+    <color name="titleGrayer">#212121</color>
     <color name="pastelRed">#FA9189</color>
 
     <color name="hintGray">#525252</color>
     <!--Less important colors-->
 
+    <color name="black">#000000</color>
+
     <color name="FEF7FF">#FEF7FF</color>
     <color name="c1c1c1">#c1c1c1</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="lightGray">#FF000000</color>
+    <color name="lightGray">#999999</color>
 
 </resources>

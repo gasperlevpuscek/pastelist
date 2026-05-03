@@ -14,27 +14,55 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="64dp"
+        android:paddingBottom="8dp"
         android:orientation="horizontal"
-        android:background="@color/secondaryGray">
+        android:background="@color/lightGray">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnTasks"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:textSize="11sp"
             android:layout_weight="1"
             android:text="@string/tasks"
-            android:backgroundTint="@color/secondaryGray"
-            android:textColor="@color/textGray" />
+            android:backgroundTint="@color/lightGray"
+            android:textColor="@color/textGray"
+            app:icon="@drawable/ic_clipboard_check"
+            app:iconTint="@color/textGray"
+            app:iconGravity="top"
+            app:iconPadding="1dp"
+            app:iconSize="20dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnUpcoming"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textSize="11sp"
             android:textColor="@color/textGray"
-            android:backgroundTint="@color/secondaryGray"
-            android:text="@string/upcoming"/>
+            android:backgroundTint="@color/lightGray"
+            android:text="@string/upcoming"
+            app:icon="@drawable/ic_calendar"
+            app:iconTint="@color/textGray"
+            app:iconGravity="top"
+            app:iconPadding="1dp"
+            app:iconSize="20dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPreferences"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textSize="11sp"
+            android:textColor="@color/textGray"
+            android:backgroundTint="@color/lightGray"
+            android:text="@string/preferences"
+            app:icon="@drawable/ic_settings_sliders"
+            app:iconTint="@color/textGray"
+            app:iconGravity="top"
+            app:iconPadding="1dp"
+            app:iconSize="20dp" />
 
     </LinearLayout>
 </LinearLayout>

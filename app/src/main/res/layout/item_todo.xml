@@ -8,13 +8,14 @@
 
     <CheckBox
         android:id="@+id/checkBoxDone"
-        android:layout_width="27dp"
-        android:layout_height="30dp" />
+        android:layout_width="32dp"
+        android:layout_height="34dp" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:layout_marginTop="4dp"
         android:orientation="vertical"
         android:layout_marginStart="8dp">
 
@@ -22,16 +23,18 @@
             android:id="@+id/textViewTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/textGray"
+            android:textColor="@color/hintGray"
+            android:textStyle="bold"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_marginBottom="4dp"/>
 
         <TextView
             android:id="@+id/textViewDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/textGray"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
