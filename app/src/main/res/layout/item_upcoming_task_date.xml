@@ -3,15 +3,32 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="10dp"
-    android:layout_marginTop="6dp"
-    android:background="@drawable/item_border">
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:paddingTop="2dp"
+    android:paddingBottom="6dp">
 
-    <!-- Date header -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_marginBottom="14dp"
+        android:background="@drawable/underline"
+        android:backgroundTint="@color/secondaryGray" />
+
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/dayHeaderRow"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="6dp"
+            android:src="@drawable/ic_calendar"
+            android:contentDescription="@string/calendar_icon"
+            />
 
         <TextView
             android:id="@+id/upcomingViewDay"
@@ -20,35 +37,58 @@
             android:text="@string/tmp"
             android:textColor="@color/textGray"
             android:textStyle="bold"
-            android:textSize="14sp"
-            android:layout_marginEnd="8dp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/upcomingViewDateNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
             android:text="@string/tmp"
             android:textColor="@color/textGray"
             android:textStyle="bold"
-            android:textSize="14sp"
-            android:layout_marginEnd="8dp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/upcomingViewMonth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
             android:text="@string/tmp"
             android:textColor="@color/textGray"
             android:textStyle="bold"
             android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/upcomingViewBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:paddingStart="7dp"
+            android:paddingEnd="7dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#2F80ED"
+            android:visibility="gone" />
+
     </LinearLayout>
 
-    <!-- Tasks container -->
     <LinearLayout
         android:id="@+id/upcomingTaskContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="8dp" />
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="10dp"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="6dp"
+        android:background="#EEEEEE" />
 
 </LinearLayout>

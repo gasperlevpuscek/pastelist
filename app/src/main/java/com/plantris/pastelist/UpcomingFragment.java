@@ -2,9 +2,6 @@ package com.plantris.pastelist;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,7 +28,6 @@ public class UpcomingFragment extends Fragment {
             DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault());
 
     private UpcomingDateAdapter upcomingDateAdapter;
-    private int selectedRangeDays = 7;
     private TaskFragment taskFragment;
 
     public void setTaskFragment(TaskFragment fragment) {
@@ -52,7 +48,7 @@ public class UpcomingFragment extends Fragment {
             upcomingDateAdapter.setDatabaseInsert(new DatabaseInsert(getContext()));
         }
         upcomingDateAdapter.setOnTaskCompletedListener(() -> {
-            loadUpcomingDays(selectedRangeDays);
+            loadUpcomingDays();
             if (taskFragment != null) {
                 taskFragment.reloadTasks();
             }
@@ -60,51 +56,17 @@ public class UpcomingFragment extends Fragment {
         upcomingTaskRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         upcomingTaskRecyclerView.setAdapter(upcomingDateAdapter);
 
-        Spinner filterSpinner = view.findViewById(R.id.filterSpinner);
-        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(
-                requireContext(),
-                R.array.upcoming_filter_options,
-                android.R.layout.simple_spinner_item
-        );
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        filterSpinner.setAdapter(spinnerAdapter);
-        filterSpinner.setSelection(0, false);
-        filterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedRangeDays = daysFromFilterPosition(position);
-                loadUpcomingDays(selectedRangeDays);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                selectedRangeDays = 7;
-            }
-        });
-
-        loadUpcomingDays(selectedRangeDays);
+        loadUpcomingDays();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        loadUpcomingDays(selectedRangeDays);
+        loadUpcomingDays();
     }
 
-    private int daysFromFilterPosition(int position) {
-        switch (position) {
-            case 1:
-                return 31;
-            case 2:
-                return 62;
-            case 3:
-                return 93;
-            default:
-                return 7;
-        }
-    }
 
-    private void loadUpcomingDays(int dayCount) {
+    private void loadUpcomingDays() {
         if (upcomingDateAdapter == null) {
             return;
         }
@@ -112,11 +74,19 @@ public class UpcomingFragment extends Fragment {
         LocalDate today = LocalDate.now();
         ArrayList<LocalDate> daysInRange = new ArrayList<>();
         Map<LocalDate, List<TodoItem>> tasksByDate = new HashMap<>();
+        Map<LocalDate, String> dateLabels = new HashMap<>();
 
-        for (int i = 0; i < dayCount; i++) {
+        for (int i = 0; i < 93; i++) {
             LocalDate day = today.plusDays(i);
             daysInRange.add(day);
             tasksByDate.put(day, new ArrayList<>());
+
+            // Add special labels for Today and Tomorrow
+            if (i == 0) {
+                dateLabels.put(day, "Today");
+            } else if (i == 1) {
+                dateLabels.put(day, "Tomorrow");
+            }
         }
 
         if (getContext() != null) {
@@ -131,7 +101,10 @@ public class UpcomingFragment extends Fragment {
                         continue;
                     }
 
-                    tasksByDate.get(taskDate).add(item);
+                    List<TodoItem> dayTasks = tasksByDate.get(taskDate);
+                    if (dayTasks != null) {
+                        dayTasks.add(item);
+                    }
                 }
             }
         }
@@ -140,7 +113,8 @@ public class UpcomingFragment extends Fragment {
             dayTasks.sort(Comparator.comparing(this::safeTaskTime));
         }
 
-        upcomingDateAdapter.setData(daysInRange, tasksByDate);
+
+        upcomingDateAdapter.setData(daysInRange, tasksByDate, dateLabels);
     }
 
     @Nullable

@@ -1,38 +1,54 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp"
     android:paddingTop="4dp"
     android:paddingBottom="4dp">
 
+
     <CheckBox
         android:id="@+id/upcomingTaskViewCompleted"
-        android:layout_width="18dp"
+        android:layout_width="20dp"
         android:layout_height="18dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="5dp">
-    </CheckBox>
+        android:buttonTint="@color/textGray" />
 
     <TextView
         android:id="@+id/upcomingViewTaskName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/tmp"
         android:textColor="@color/textGray"
-        android:layout_marginTop="1dp"
-        android:textSize="16sp" />
+        android:textSize="14sp"
+        android:maxLines="2"
+        android:ellipsize="end" />
 
-    <TextView
-        android:id="@+id/upcomingViewTaskTime"
+    <LinearLayout
+        android:id="@+id/timeContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:width="100dp"
-        android:layout_marginTop="1dp"
-        android:text="@string/tmp"
-        android:textColor="@color/textGray"
-        android:textSize="16sp" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="13dp"
+            android:layout_height="13dp"
+            android:src="@drawable/ic_clock"
+            android:layout_marginEnd="4dp" />
+
+        <TextView
+            android:id="@+id/upcomingViewTaskTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tmp"
+            android:textColor="@color/textGray"
+            android:textSize="13sp" />
+
+    </LinearLayout>
 
 </LinearLayout>

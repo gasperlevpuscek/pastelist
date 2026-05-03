@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +23,7 @@ public class UpcomingDateAdapter extends RecyclerView.Adapter<UpcomingDateAdapte
 
     private final ArrayList<LocalDate> upcomingDates = new ArrayList<>();
     private final Map<LocalDate, List<TodoItem>> tasksByDate = new java.util.HashMap<>();
+    private final Map<LocalDate, String> dateLabels = new java.util.HashMap<>();
     private final DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("EEEE", Locale.getDefault());
     private final DateTimeFormatter numberFormatter = DateTimeFormatter.ofPattern("dd", Locale.getDefault());
     private final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMM", Locale.getDefault());
@@ -32,11 +34,13 @@ public class UpcomingDateAdapter extends RecyclerView.Adapter<UpcomingDateAdapte
         void onTaskCompleted();
     }
 
-    public void setData(@NonNull List<LocalDate> dates, @NonNull Map<LocalDate, List<TodoItem>> groupedTasks) {
+    public void setData(@NonNull List<LocalDate> dates, @NonNull Map<LocalDate, List<TodoItem>> groupedTasks, @NonNull Map<LocalDate, String> labels) {
         upcomingDates.clear();
         upcomingDates.addAll(dates);
         tasksByDate.clear();
         tasksByDate.putAll(groupedTasks);
+        dateLabels.clear();
+        dateLabels.putAll(labels);
         notifyDataSetChanged();
     }
 
@@ -60,9 +64,21 @@ public class UpcomingDateAdapter extends RecyclerView.Adapter<UpcomingDateAdapte
     public void onBindViewHolder(@NonNull UpcomingDateViewHolder holder, int position) {
         LocalDate date = upcomingDates.get(position);
 
-        holder.upcomingViewDay.setText(date.format(dayFormatter)+",");
-        holder.upcomingViewDateNumber.setText(date.format(numberFormatter));
-        holder.upcomingViewMonth.setText(date.format(monthFormatter));
+        // Build the day label with optional special tag (Today, Tomorrow)
+        String dayName = date.format(dayFormatter);
+        String dateNumber = date.format(numberFormatter);
+        String month = date.format(monthFormatter);
+        String specialLabel = dateLabels.get(date);
+
+        // Format: "Wednesday, 04 May - Today" or just "Wednesday, 04 May"
+        String dayText = dayName + ", " + dateNumber + " " + month;
+        if (specialLabel != null) {
+            dayText += " - " + specialLabel;
+        }
+
+        holder.upcomingViewDay.setText(dayText);
+        holder.upcomingViewDateNumber.setVisibility(View.GONE);
+        holder.upcomingViewMonth.setVisibility(View.GONE);
         holder.upcomingTaskContainer.removeAllViews();
 
         List<TodoItem> tasksForDate = tasksByDate.getOrDefault(date, Collections.emptyList());
@@ -72,11 +88,19 @@ public class UpcomingDateAdapter extends RecyclerView.Adapter<UpcomingDateAdapte
             TextView taskName = taskView.findViewById(R.id.upcomingViewTaskName);
             TextView taskTime = taskView.findViewById(R.id.upcomingViewTaskTime);
             CheckBox taskCheckbox = taskView.findViewById(R.id.upcomingTaskViewCompleted);
+            LinearLayout timeContainer = taskView.findViewById(R.id.timeContainer);
 
             taskName.setText(task.getTitle());
             String time = task.getTime() == null ? "" : task.getTime();
             taskTime.setText(time);
             taskCheckbox.setChecked(task.isCompleted());
+
+            // Hide time container if no time is set
+            if (time.isEmpty()) {
+                timeContainer.setVisibility(View.GONE);
+            } else {
+                timeContainer.setVisibility(View.VISIBLE);
+            }
 
             // Set checkbox listener to update database
             taskCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
