@@ -3,6 +3,7 @@ package com.plantris.pastelist;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
@@ -60,15 +61,15 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
         TodoItem item = items.get(position);
 
         holder.textViewTitle.setText(item.getTitle());
-        holder.textViewDescription.setText(item.getDescription());
-        holder.textViewDate.setText(item.getDate());
-        holder.textViewTime.setText(item.getTime());
+        bindOptionalText(holder.textViewDescription, item.getDescription());
+        bindOptionalTextWithIcon(holder.textViewDate, holder.imageViewDateIcon, item.getDate());
+        bindOptionalTextWithIcon(holder.textViewTime, holder.imageViewTimeIcon, item.getTime());
 
         // Check if task is overdue and apply appropriate border and text
         boolean overdue = isOverdue(item);
         if (overdue) {
-            holder.textViewOverdue.setText("OVERDUE");
-            holder.textViewOverdue.setTextColor(holder.itemView.getContext().getColor(android.R.color.holo_red_dark));
+            holder.textViewOverdue.setText(R.string.overdue);
+            holder.textViewOverdue.setTextColor(holder.itemView.getContext().getColor(R.color.pastelRed));
             holder.itemView.setBackground(AppCompatResources.getDrawable(holder.itemView.getContext(), R.drawable.item_border_overdue));
         } else {
             holder.textViewOverdue.setText("");
@@ -116,6 +117,28 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
         return items.size();
     }
 
+    private void bindOptionalText(TextView textView, String value) {
+        if (value == null || value.trim().isEmpty()) {
+            textView.setText("");
+            textView.setVisibility(View.GONE);
+        } else {
+            textView.setText(value);
+            textView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void bindOptionalTextWithIcon(TextView textView, ImageView iconView, String value) {
+        if (value == null || value.trim().isEmpty()) {
+            textView.setText("");
+            textView.setVisibility(View.GONE);
+            iconView.setVisibility(View.GONE);
+        } else {
+            textView.setText(value);
+            textView.setVisibility(View.VISIBLE);
+            iconView.setVisibility(View.VISIBLE);
+        }
+    }
+
     /**
      * Check if a task date is in the past (overdue).
      * Expected date format: "yyyy-MM-dd" or "dd/MM/yyyy"
@@ -143,7 +166,9 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
         final CheckBox checkBoxDone;
         final TextView textViewTitle;
         final TextView textViewDescription;
+        final ImageView imageViewDateIcon;
         final TextView textViewDate;
+        final ImageView imageViewTimeIcon;
         final TextView textViewTime;
         final TextView textViewOverdue;
 
@@ -152,7 +177,9 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
             checkBoxDone = itemView.findViewById(R.id.checkBoxDone);
             textViewTitle = itemView.findViewById(R.id.textViewTitle);
             textViewDescription = itemView.findViewById(R.id.textViewDescription);
+            imageViewDateIcon = itemView.findViewById(R.id.imageViewDateIcon);
             textViewDate = itemView.findViewById(R.id.textViewDate);
+            imageViewTimeIcon = itemView.findViewById(R.id.imageViewTimeIcon);
             textViewTime = itemView.findViewById(R.id.textViewTime);
             textViewOverdue = itemView.findViewById(R.id.textViewOverdue);
 
