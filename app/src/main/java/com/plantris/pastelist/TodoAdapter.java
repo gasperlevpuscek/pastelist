@@ -138,11 +138,6 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
             iconView.setVisibility(View.VISIBLE);
         }
     }
-
-    /**
-     * Check if a task date is in the past (overdue).
-     * Expected date format: "yyyy-MM-dd" or "dd/MM/yyyy"
-     */
     private boolean isOverdue(TodoItem item) {
         if (item.isCompleted()) return false;
         if (item.getDate() == null || item.getTime() == null) return false;

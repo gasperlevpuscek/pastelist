@@ -14,8 +14,6 @@ import androidx.core.content.ContextCompat;
 
 public class ReminderReceiver extends BroadcastReceiver {
     public static final String EXTRA_TASK_TITLE = "extra_task_title";
-    public static final String EXTRA_DUE_DATE = "extra_due_date";
-    public static final String EXTRA_DUE_TIME = "extra_due_time";
     public static final String EXTRA_REMINDER_MINUTES_BEFORE = "extra_reminder_minutes_before";
     public static final String EXTRA_NOTIFICATION_ID = "extra_notification_id";
 

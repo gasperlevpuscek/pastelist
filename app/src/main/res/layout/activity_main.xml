@@ -1,4 +1,5 @@
 <LinearLayout android:orientation="vertical"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -8,6 +9,7 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
         android:layout_height="0dp"
         android:background="@color/backgroundWhite"
         android:layout_weight="1" />

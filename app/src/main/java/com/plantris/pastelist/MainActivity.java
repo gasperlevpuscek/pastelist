@@ -1,32 +1,20 @@
 package com.plantris.pastelist;
 
-import static android.view.WindowInsetsController.APPEARANCE_LIGHT_CAPTION_BARS;
-import static android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
-import static android.view.WindowInsetsController.APPEARANCE_TRANSPARENT_CAPTION_BAR_BACKGROUND;
-import static java.security.AccessController.getContext;
-
-import android.Manifest;
-import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.view.WindowInsetsController;
-import android.widget.Button;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.button.MaterialButton;
-
-import java.time.LocalDate;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -34,15 +22,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-
-        // Set status bar color and make icons dark for visibility on white background
-        getWindow().setStatusBarColor(ContextCompat.getColor(this, android.R.color.white));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            getWindow().getInsetsController().setSystemBarsAppearance(APPEARANCE_LIGHT_NAVIGATION_BARS,APPEARANCE_LIGHT_NAVIGATION_BARS);
-        } else {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        }
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         ViewPager2 viewPager = findViewById(R.id.viewPager);
         MaterialButton btnTasks = findViewById(R.id.btnTasks);
