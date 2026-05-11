@@ -5,11 +5,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import java.util.ArrayList;
 
 public final class EditTask {
 
@@ -41,6 +46,9 @@ public final class EditTask {
         Button btnDate = editView.findViewById(R.id.btnDate);
         Button btnSave = editView.findViewById(R.id.btnSave);
         ImageButton btnTaskMenu = editView.findViewById(R.id.btnTaskMenu);
+        View addSubtaskButton = editView.findViewById(R.id.addSubtaskButton);
+        TextView subtaskCounter = editView.findViewById(R.id.subtaskCounter);
+        RecyclerView subTaskView = editView.findViewById(R.id.subTaskView);
 
         taskNameInput.setText(safe(item.getTitle()));
         taskDescriptionInput.setText(safe(item.getDescription()));
@@ -74,6 +82,21 @@ public final class EditTask {
         });
 
         btnTaskMenu.setOnClickListener(v -> showOptionsSheet(activity, root, item, listener, editDialog));
+
+        ArrayList<SubtaskItem> subtaskItems;
+        try (DatabaseInsert dbHelper = new DatabaseInsert(activity)) {
+            subtaskItems = dbHelper.readSubtasksForTask(item.getId());
+        }
+
+        SubtaskAdapter subtaskAdapter = new SubtaskAdapter(subtaskItems);
+        subTaskView.setLayoutManager(new LinearLayoutManager(activity));
+        subTaskView.setAdapter(subtaskAdapter);
+        updateSubtaskCounter(subtaskCounter, subtaskItems);
+
+        addSubtaskButton.setOnClickListener(v -> AddSubtaskSheet.show(activity, item.getId(), newItem -> {
+            subtaskAdapter.addItem(newItem);
+            updateSubtaskCounter(subtaskCounter, subtaskItems);
+        }));
 
         editDialog.show();
     }
@@ -133,6 +156,16 @@ public final class EditTask {
         });
 
         deleteDialog.show();
+    }
+
+    private static void updateSubtaskCounter(@NonNull TextView counterView, @NonNull ArrayList<SubtaskItem> items) {
+        int completed = 0;
+        for (SubtaskItem item : items) {
+            if (item.isCompleted()) {
+                completed++;
+            }
+        }
+        counterView.setText(completed + "/" + items.size());
     }
 
     @NonNull

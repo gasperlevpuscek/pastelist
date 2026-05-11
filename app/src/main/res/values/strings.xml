@@ -28,5 +28,6 @@
 
     <string name="duplicate_task">Duplicate task</string>
 
+    <string name="add_subtask">Add sub-task</string>
 
 </resources>

@@ -8,7 +8,6 @@
     android:paddingTop="4dp"
     android:paddingBottom="4dp">
 
-
     <CheckBox
         android:id="@+id/upcomingTaskViewCompleted"
         android:layout_width="20dp"

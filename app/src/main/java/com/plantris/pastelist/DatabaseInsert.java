@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class DatabaseInsert extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "PasteList.db";
 
     public DatabaseInsert(Context context) {
@@ -20,6 +20,7 @@ public class DatabaseInsert extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DatabaseManager.SQL_CREATE_ENTRIES);
+        db.execSQL(DatabaseManager.SQL_CREATE_SUBTASK_ENTRIES);
     }
 
     @Override
@@ -37,6 +38,9 @@ public class DatabaseInsert extends SQLiteOpenHelper {
                             " ADD COLUMN " + DatabaseManager.FeedEntry.COLUMN_UNTIL_REMINDER +
                             " INTEGER"
             );
+        }
+        if (oldVersion < 4) {
+            db.execSQL(DatabaseManager.SQL_CREATE_SUBTASK_ENTRIES);
         }
     }
 
@@ -206,8 +210,72 @@ public class DatabaseInsert extends SQLiteOpenHelper {
         return items;
     }
 
-    private boolean hasColumn(SQLiteDatabase db, String columnName) {
-        try (Cursor cursor = db.rawQuery("PRAGMA table_info(" + DatabaseManager.FeedEntry.TABLE_NAME + ")", null)) {
+    public long insertSubtask(long taskId, String title, String description, boolean isCompleted) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(DatabaseManager.SubtaskEntry.COLUMN_NAME_TASK_ID, taskId);
+        values.put(DatabaseManager.SubtaskEntry.COLUMN_NAME_TITLE, title);
+        values.put(DatabaseManager.SubtaskEntry.COLUMN_NAME_DESCRIPTION, description);
+        values.put(DatabaseManager.SubtaskEntry.COLUMN_NAME_COMPLETED, isCompleted ? 1 : 0);
+
+        return db.insert(DatabaseManager.SubtaskEntry.TABLE_NAME, null, values);
+    }
+
+    public ArrayList<SubtaskItem> readSubtasksForTask(long taskId) {
+        ArrayList<SubtaskItem> items = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+
+        boolean hasDescriptionColumn = hasColumn(db, DatabaseManager.SubtaskEntry.TABLE_NAME,
+                DatabaseManager.SubtaskEntry.COLUMN_NAME_DESCRIPTION);
+
+        ArrayList<String> projectionList = new ArrayList<>();
+        projectionList.add(DatabaseManager.SubtaskEntry._ID);
+        projectionList.add(DatabaseManager.SubtaskEntry.COLUMN_NAME_TASK_ID);
+        projectionList.add(DatabaseManager.SubtaskEntry.COLUMN_NAME_TITLE);
+        if (hasDescriptionColumn) {
+            projectionList.add(DatabaseManager.SubtaskEntry.COLUMN_NAME_DESCRIPTION);
+        }
+        projectionList.add(DatabaseManager.SubtaskEntry.COLUMN_NAME_COMPLETED);
+
+        String[] projection = projectionList.toArray(new String[0]);
+
+        String selection = DatabaseManager.SubtaskEntry.COLUMN_NAME_TASK_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(taskId)};
+
+        Cursor cursor = db.query(
+                DatabaseManager.SubtaskEntry.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                DatabaseManager.SubtaskEntry._ID + " ASC"
+        );
+
+        while (cursor.moveToNext()) {
+            long id = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseManager.SubtaskEntry._ID));
+            long parentId = cursor.getLong(cursor.getColumnIndexOrThrow(DatabaseManager.SubtaskEntry.COLUMN_NAME_TASK_ID));
+            String title = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseManager.SubtaskEntry.COLUMN_NAME_TITLE));
+            String description = "";
+            if (hasDescriptionColumn) {
+                description = cursor.getString(
+                        cursor.getColumnIndexOrThrow(DatabaseManager.SubtaskEntry.COLUMN_NAME_DESCRIPTION)
+                );
+            }
+            boolean isCompleted = cursor.getInt(
+                    cursor.getColumnIndexOrThrow(DatabaseManager.SubtaskEntry.COLUMN_NAME_COMPLETED)
+            ) == 1;
+
+            items.add(new SubtaskItem(id, parentId, title, description, isCompleted));
+        }
+
+        cursor.close();
+        return items;
+    }
+
+    private boolean hasColumn(SQLiteDatabase db, String tableName, String columnName) {
+        try (Cursor cursor = db.rawQuery("PRAGMA table_info(" + tableName + ")", null)) {
             int nameIndex = cursor.getColumnIndex("name");
             while (cursor.moveToNext()) {
                 if (columnName.equals(cursor.getString(nameIndex))) {
@@ -216,5 +284,9 @@ public class DatabaseInsert extends SQLiteOpenHelper {
             }
             return false;
         }
+    }
+
+    private boolean hasColumn(SQLiteDatabase db, String columnName) {
+        return hasColumn(db, DatabaseManager.FeedEntry.TABLE_NAME, columnName);
     }
 }
