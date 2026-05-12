@@ -13,10 +13,20 @@ import java.util.ArrayList;
 
 public class SubtaskAdapter extends RecyclerView.Adapter<SubtaskAdapter.SubtaskVH> {
 
+    public interface OnSubtaskCompletionChanged {
+        void onSubtaskCompletionChanged(@NonNull SubtaskItem item, boolean isCompleted);
+    }
+
     private final ArrayList<SubtaskItem> items;
+    private final OnSubtaskCompletionChanged completionChanged;
 
     public SubtaskAdapter(ArrayList<SubtaskItem> items) {
+        this(items, null);
+    }
+
+    public SubtaskAdapter(ArrayList<SubtaskItem> items, OnSubtaskCompletionChanged completionChanged) {
         this.items = items;
+        this.completionChanged = completionChanged;
     }
 
     @NonNull
@@ -35,6 +45,18 @@ public class SubtaskAdapter extends RecyclerView.Adapter<SubtaskAdapter.SubtaskV
         holder.checkBoxCompleted.setChecked(item.isCompleted());
         holder.textViewTitle.setText(item.getTitle());
         bindOptionalText(holder.textViewDescription, item.getDescription());
+
+        holder.checkBoxCompleted.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            int adapterPosition = holder.getBindingAdapterPosition();
+            if (adapterPosition == RecyclerView.NO_POSITION) {
+                return;
+            }
+            SubtaskItem currentItem = items.get(adapterPosition);
+            currentItem.setCompleted(isChecked);
+            if (completionChanged != null) {
+                completionChanged.onSubtaskCompletionChanged(currentItem, isChecked);
+            }
+        });
     }
 
     @Override
@@ -70,4 +92,3 @@ public class SubtaskAdapter extends RecyclerView.Adapter<SubtaskAdapter.SubtaskV
         }
     }
 }
-

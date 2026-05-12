@@ -125,6 +125,7 @@ public class DatabaseInsert extends SQLiteOpenHelper {
         return db.update(DatabaseManager.FeedEntry.TABLE_NAME, values, selection, selectionArgs);
     }
 
+    // manual delete
     public int deleteEntry(long id) {
         SQLiteDatabase db = getWritableDatabase();
         String selection = DatabaseManager.FeedEntry._ID + " = ?";
@@ -132,10 +133,7 @@ public class DatabaseInsert extends SQLiteOpenHelper {
         return db.delete(DatabaseManager.FeedEntry.TABLE_NAME, selection, selectionArgs);
     }
 
-    /**
-     * Permanently delete entries that have been marked completed.
-     * This is intended to be called on app stop/close to clean up completed items.
-     */
+    // delete when task completed
     public int deleteCompletedEntries() {
         SQLiteDatabase db = getWritableDatabase();
         String selection = DatabaseManager.FeedEntry.COLUMN_NAME_COMPLETED + " = ?";
@@ -220,6 +218,18 @@ public class DatabaseInsert extends SQLiteOpenHelper {
         values.put(DatabaseManager.SubtaskEntry.COLUMN_NAME_COMPLETED, isCompleted ? 1 : 0);
 
         return db.insert(DatabaseManager.SubtaskEntry.TABLE_NAME, null, values);
+    }
+
+    public int updateSubtaskCompleted(long id, boolean isCompleted) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(DatabaseManager.SubtaskEntry.COLUMN_NAME_COMPLETED, isCompleted ? 1 : 0);
+
+        String selection = DatabaseManager.SubtaskEntry._ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
+
+        return db.update(DatabaseManager.SubtaskEntry.TABLE_NAME, values, selection, selectionArgs);
     }
 
     public ArrayList<SubtaskItem> readSubtasksForTask(long taskId) {

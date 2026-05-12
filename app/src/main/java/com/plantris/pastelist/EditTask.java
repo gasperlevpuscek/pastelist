@@ -88,7 +88,12 @@ public final class EditTask {
             subtaskItems = dbHelper.readSubtasksForTask(item.getId());
         }
 
-        SubtaskAdapter subtaskAdapter = new SubtaskAdapter(subtaskItems);
+        SubtaskAdapter subtaskAdapter = new SubtaskAdapter(subtaskItems, (subtaskItem, isCompleted) -> {
+            try (DatabaseInsert dbHelper = new DatabaseInsert(activity)) {
+                dbHelper.updateSubtaskCompleted(subtaskItem.getId(), isCompleted);
+            }
+            updateSubtaskCounter(subtaskCounter, subtaskItems);
+        });
         subTaskView.setLayoutManager(new LinearLayoutManager(activity));
         subTaskView.setAdapter(subtaskAdapter);
         updateSubtaskCounter(subtaskCounter, subtaskItems);
