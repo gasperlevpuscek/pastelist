@@ -55,7 +55,7 @@ public class UpcomingFragment extends Fragment {
         });
         upcomingDateAdapter.setOnTaskClickListener(item -> {
             if (taskFragment != null) {
-                taskFragment.showEditTaskPopup(item);
+                taskFragment.showEditTaskPopup(item, this::loadUpcomingDays);
             }
         });
         upcomingTaskRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));

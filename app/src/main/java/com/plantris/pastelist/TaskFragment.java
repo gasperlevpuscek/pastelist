@@ -3,6 +3,7 @@ package com.plantris.pastelist;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -155,6 +156,10 @@ public class TaskFragment extends Fragment {
     }
 
     public void showEditTaskPopup(@NonNull TodoItem item) {
+        showEditTaskPopup(item, null);
+    }
+
+    public void showEditTaskPopup(@NonNull TodoItem item, @Nullable Runnable onAfterChange) {
         if (!(requireActivity() instanceof AppCompatActivity) || getContext() == null) {
             return;
         }
@@ -176,6 +181,9 @@ public class TaskFragment extends Fragment {
                     );
                 }
                 loadTasks(showCompletedOnly);
+                if (onAfterChange != null) {
+                    onAfterChange.run();
+                }
             }
 
             @Override
@@ -187,6 +195,9 @@ public class TaskFragment extends Fragment {
                     dbHelper.deleteEntry(sourceItem.getId());
                 }
                 loadTasks(showCompletedOnly);
+                if (onAfterChange != null) {
+                    onAfterChange.run();
+                }
             }
 
             @Override
@@ -203,7 +214,11 @@ public class TaskFragment extends Fragment {
                             sourceItem.getTime()
                     );
                 }
+                Toast.makeText(getContext(), "Task updated", Toast.LENGTH_SHORT).show();
                 loadTasks(showCompletedOnly);
+                if (onAfterChange != null) {
+                    onAfterChange.run();
+                }
             }
         });
     }
