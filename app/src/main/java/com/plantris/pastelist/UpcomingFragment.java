@@ -53,6 +53,11 @@ public class UpcomingFragment extends Fragment {
                 taskFragment.reloadTasks();
             }
         });
+        upcomingDateAdapter.setOnTaskClickListener(item -> {
+            if (taskFragment != null) {
+                taskFragment.showEditTaskPopup(item);
+            }
+        });
         upcomingTaskRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         upcomingTaskRecyclerView.setAdapter(upcomingDateAdapter);
 
@@ -141,5 +146,5 @@ public class UpcomingFragment extends Fragment {
             return LocalTime.MAX;
         }
     }
-}
 
+}

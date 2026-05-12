@@ -150,7 +150,11 @@ public class TaskFragment extends Fragment {
         });
     }
 
-    private void showEditTaskPopup(TodoItem item, int position) {
+    public void showEditTaskPopup(@NonNull TodoItem item, int position) {
+        showEditTaskPopup(item);
+    }
+
+    public void showEditTaskPopup(@NonNull TodoItem item) {
         if (!(requireActivity() instanceof AppCompatActivity) || getContext() == null) {
             return;
         }

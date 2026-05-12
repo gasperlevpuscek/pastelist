@@ -29,9 +29,14 @@ public class UpcomingDateAdapter extends RecyclerView.Adapter<UpcomingDateAdapte
     private final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMM", Locale.getDefault());
     private DatabaseInsert databaseInsert;
     private OnTaskCompletedListener onTaskCompletedListener;
+    private OnTaskClickListener onTaskClickListener;
 
     public interface OnTaskCompletedListener {
         void onTaskCompleted();
+    }
+
+    public interface OnTaskClickListener {
+        void onTaskClick(@NonNull TodoItem item);
     }
 
     public void setData(@NonNull List<LocalDate> dates, @NonNull Map<LocalDate, List<TodoItem>> groupedTasks, @NonNull Map<LocalDate, String> labels) {
@@ -50,6 +55,10 @@ public class UpcomingDateAdapter extends RecyclerView.Adapter<UpcomingDateAdapte
 
     public void setOnTaskCompletedListener(OnTaskCompletedListener listener) {
         this.onTaskCompletedListener = listener;
+    }
+
+    public void setOnTaskClickListener(OnTaskClickListener listener) {
+        this.onTaskClickListener = listener;
     }
 
     @NonNull
@@ -102,6 +111,12 @@ public class UpcomingDateAdapter extends RecyclerView.Adapter<UpcomingDateAdapte
                 timeContainer.setVisibility(View.VISIBLE);
             }
 
+            taskView.setOnClickListener(v -> {
+                if (onTaskClickListener != null) {
+                    onTaskClickListener.onTaskClick(task);
+                }
+            });
+
             // Set checkbox listener to update database
             taskCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (databaseInsert != null) {
@@ -137,4 +152,3 @@ public class UpcomingDateAdapter extends RecyclerView.Adapter<UpcomingDateAdapte
         }
     }
 }
-
