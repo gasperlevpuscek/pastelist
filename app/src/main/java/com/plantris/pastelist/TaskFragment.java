@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public class TaskFragment extends Fragment {
 
-    private final ArrayList<TodoItem> todoList = new ArrayList<>();
+    private ArrayList<TodoItem> todoList = new ArrayList<>();
     private TodoAdapter adapter;
     private boolean showCompletedOnly = false;
 
@@ -46,8 +46,8 @@ public class TaskFragment extends Fragment {
 
                     // Show snackbar with Undo action. If undone, mark not completed and restore in list.
                     View parentView = requireView();
-                    final int removedPos = position;
-                    final TodoItem removedItem = changedItem;
+                    int removedPos = position;
+                    TodoItem removedItem = changedItem;
                     Snackbar.make(parentView, "Task completed", Snackbar.LENGTH_LONG)
                             .setAction("Undo", v -> {
                                 if (getContext() == null) return;
@@ -71,11 +71,6 @@ public class TaskFragment extends Fragment {
 
         view.findViewById(R.id.add_task_button).setOnClickListener(v -> showAddTaskSheet());
         view.findViewById(R.id.switch_views).setOnClickListener(v -> loadTasks(!showCompletedOnly));
-
-
-
-
-
     }
 
     @SuppressLint("NotifyDataSetChanged")

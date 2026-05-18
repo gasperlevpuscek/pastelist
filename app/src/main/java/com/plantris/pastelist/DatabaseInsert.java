@@ -10,8 +10,8 @@ import java.util.ArrayList;
 
 public class DatabaseInsert extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 4;
-    public static final String DATABASE_NAME = "PasteList.db";
+    public static int DATABASE_VERSION = 5;
+    public static String DATABASE_NAME = "PasteList.db";
 
     public DatabaseInsert(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -21,6 +21,7 @@ public class DatabaseInsert extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DatabaseManager.SQL_CREATE_ENTRIES);
         db.execSQL(DatabaseManager.SQL_CREATE_SUBTASK_ENTRIES);
+        db.execSQL(DatabaseManager.SQL_CREATE_SETTINGS_ENTRIES);
     }
 
     @Override
@@ -41,6 +42,9 @@ public class DatabaseInsert extends SQLiteOpenHelper {
         }
         if (oldVersion < 4) {
             db.execSQL(DatabaseManager.SQL_CREATE_SUBTASK_ENTRIES);
+        }
+        if (oldVersion < 5) {
+            db.execSQL(DatabaseManager.SQL_CREATE_SETTINGS_ENTRIES);
         }
     }
 
@@ -298,5 +302,73 @@ public class DatabaseInsert extends SQLiteOpenHelper {
 
     private boolean hasColumn(SQLiteDatabase db, String columnName) {
         return hasColumn(db, DatabaseManager.FeedEntry.TABLE_NAME, columnName);
+    }
+
+    public static class UserSettings {
+        public final String email;
+        public final String password;
+
+        public UserSettings(String email, String password) {
+            this.email = email;
+            this.password = password;
+        }
+    }
+
+    public void saveUserSettings(String email, String password) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(DatabaseManager.SettingsEntry.COLUMN_NAME_EMAIL, email);
+        values.put(DatabaseManager.SettingsEntry.COLUMN_NAME_PASSWORD, password);
+
+        String selection = DatabaseManager.SettingsEntry._ID + " = ?";
+        String[] selectionArgs = {"1"};
+
+        int updated = db.update(DatabaseManager.SettingsEntry.TABLE_NAME, values, selection, selectionArgs);
+        if (updated == 0) {
+            values.put(DatabaseManager.SettingsEntry._ID, 1);
+            db.insert(DatabaseManager.SettingsEntry.TABLE_NAME, null, values);
+        }
+    }
+
+    public void saveUserEmail(String email) {
+        UserSettings existing = readUserSettings();
+        String existingPassword = existing == null ? null : existing.password;
+        saveUserSettings(email, existingPassword);
+    }
+
+    public UserSettings readUserSettings() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String[] projection = {
+                DatabaseManager.SettingsEntry._ID,
+                DatabaseManager.SettingsEntry.COLUMN_NAME_EMAIL,
+                DatabaseManager.SettingsEntry.COLUMN_NAME_PASSWORD
+        };
+
+        String selection = DatabaseManager.SettingsEntry._ID + " = ?";
+        String[] selectionArgs = {"1"};
+
+        try (Cursor cursor = db.query(
+                DatabaseManager.SettingsEntry.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        )) {
+            if (cursor.moveToFirst()) {
+                String email = cursor.getString(
+                        cursor.getColumnIndexOrThrow(DatabaseManager.SettingsEntry.COLUMN_NAME_EMAIL)
+                );
+                String password = cursor.getString(
+                        cursor.getColumnIndexOrThrow(DatabaseManager.SettingsEntry.COLUMN_NAME_PASSWORD)
+                );
+                return new UserSettings(email, password);
+            }
+        }
+
+        return null;
     }
 }

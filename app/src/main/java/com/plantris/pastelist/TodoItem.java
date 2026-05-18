@@ -2,12 +2,12 @@ package com.plantris.pastelist;
 
 public class TodoItem {
 
-    private final long id;
-    private final String title;
-    private final String description;
-    private final String date;
-    private final String time;
-    private final Integer reminderMinutesBefore;
+    private long id;
+    private String title;
+    private String description;
+    private String date;
+    private String time;
+    private Integer reminderMinutesBefore;
     private boolean isCompleted;
 
     public TodoItem(String title, String description, String date, String time) {
@@ -19,7 +19,8 @@ public class TodoItem {
     }
 
     public TodoItem(long id, String title, String description, String date, String time, Integer reminderMinutesBefore, boolean isCompleted
-    ) {this.id = id;
+    ) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.date = date;

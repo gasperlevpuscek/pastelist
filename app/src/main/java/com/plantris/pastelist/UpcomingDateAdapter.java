@@ -21,12 +21,12 @@ import java.util.Map;
 
 public class UpcomingDateAdapter extends RecyclerView.Adapter<UpcomingDateAdapter.UpcomingDateViewHolder> {
 
-    private final ArrayList<LocalDate> upcomingDates = new ArrayList<>();
-    private final Map<LocalDate, List<TodoItem>> tasksByDate = new java.util.HashMap<>();
-    private final Map<LocalDate, String> dateLabels = new java.util.HashMap<>();
-    private final DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("EEEE", Locale.getDefault());
-    private final DateTimeFormatter numberFormatter = DateTimeFormatter.ofPattern("dd", Locale.getDefault());
-    private final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMM", Locale.getDefault());
+    private ArrayList<LocalDate> upcomingDates = new ArrayList<>();
+    private Map<LocalDate, List<TodoItem>> tasksByDate = new java.util.HashMap<>();
+    private Map<LocalDate, String> dateLabels = new java.util.HashMap<>();
+    private DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("EEEE", Locale.getDefault());
+    private DateTimeFormatter numberFormatter = DateTimeFormatter.ofPattern("dd", Locale.getDefault());
+    private DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMM", Locale.getDefault());
     private DatabaseInsert databaseInsert;
     private OnTaskCompletedListener onTaskCompletedListener;
     private OnTaskClickListener onTaskClickListener;
@@ -138,10 +138,10 @@ public class UpcomingDateAdapter extends RecyclerView.Adapter<UpcomingDateAdapte
     }
 
     static class UpcomingDateViewHolder extends RecyclerView.ViewHolder {
-        final TextView upcomingViewDay;
-        final TextView upcomingViewDateNumber;
-        final TextView upcomingViewMonth;
-        final LinearLayout upcomingTaskContainer;
+        TextView upcomingViewDay;
+        TextView upcomingViewDateNumber;
+        TextView upcomingViewMonth;
+        LinearLayout upcomingTaskContainer;
 
         UpcomingDateViewHolder(@NonNull View itemView) {
             super(itemView);

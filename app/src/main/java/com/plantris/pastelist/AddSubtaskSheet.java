@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
-public final class AddSubtaskSheet {
+public class AddSubtaskSheet {
 
     private AddSubtaskSheet() {
         // Utility class.

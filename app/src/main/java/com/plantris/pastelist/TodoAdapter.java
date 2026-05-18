@@ -19,10 +19,10 @@ import java.util.ArrayList;
 
 public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
 
-    private final ArrayList<TodoItem> items;
-    private final OnTodoCompletionChangedListener onTodoCompletionChangedListener;
-    private final OnTodoItemClickListener onTodoItemClickListener;
-    private final OnTodoItemLongClickListener onTodoItemLongClickListener;
+    private ArrayList<TodoItem> items;
+    private OnTodoCompletionChangedListener onTodoCompletionChangedListener;
+    private OnTodoItemClickListener onTodoItemClickListener;
+    private OnTodoItemLongClickListener onTodoItemLongClickListener;
 
     public interface OnTodoCompletionChangedListener {
         void onTodoCompletionChanged(TodoItem item, boolean isCompleted, int position);
@@ -139,8 +139,12 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
         }
     }
     private boolean isOverdue(TodoItem item) {
-        if (item.isCompleted()) return false;
-        if (item.getDate() == null || item.getTime() == null) return false;
+        if (item.isCompleted()) {
+            return false;
+        }
+        if (item.getDate() == null || item.getTime() == null) {
+            return false;
+        }
 
         try {
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d.M.yyyy");
@@ -158,14 +162,14 @@ public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoVH> {
     }
 
     public static class TodoVH extends RecyclerView.ViewHolder {
-        final CheckBox checkBoxDone;
-        final TextView textViewTitle;
-        final TextView textViewDescription;
-        final ImageView imageViewDateIcon;
-        final TextView textViewDate;
-        final ImageView imageViewTimeIcon;
-        final TextView textViewTime;
-        final TextView textViewOverdue;
+        CheckBox checkBoxDone;
+        TextView textViewTitle;
+        TextView textViewDescription;
+        ImageView imageViewDateIcon;
+        TextView textViewDate;
+        ImageView imageViewTimeIcon;
+        TextView textViewTime;
+        TextView textViewOverdue;
 
         TodoVH(@NonNull View itemView) {
             super(itemView);

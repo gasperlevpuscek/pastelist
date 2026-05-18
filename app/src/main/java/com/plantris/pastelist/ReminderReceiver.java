@@ -13,9 +13,9 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 public class ReminderReceiver extends BroadcastReceiver {
-    public static final String EXTRA_TASK_TITLE = "extra_task_title";
-    public static final String EXTRA_REMINDER_MINUTES_BEFORE = "extra_reminder_minutes_before";
-    public static final String EXTRA_NOTIFICATION_ID = "extra_notification_id";
+    public static String EXTRA_TASK_TITLE = "extra_task_title";
+    public static String EXTRA_REMINDER_MINUTES_BEFORE = "extra_reminder_minutes_before";
+    public static String EXTRA_NOTIFICATION_ID = "extra_notification_id";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -28,15 +28,14 @@ public class ReminderReceiver extends BroadcastReceiver {
         int notificationId = intent != null ? intent.getIntExtra(EXTRA_NOTIFICATION_ID, 1001) : 1001;
 
         String reminderText = formatReminderOffset(reminderMinutesBefore);
-        String safeTaskTitle = taskTitle == null || taskTitle.trim().isEmpty() ? "your task" : taskTitle.trim();
 
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, "task_reminders")
                         .setSmallIcon(android.R.drawable.ic_dialog_info)
                         .setContentTitle("You have tasks due")
-                        .setContentText("You have a task \"" + safeTaskTitle + "\" due \"" + reminderText + "\"")
+                        .setContentText("You have a task \"" + taskTitle + "\" due \"" + reminderText + "\"")
                         .setStyle(new NotificationCompat.BigTextStyle()
-                                .bigText("You have a task \"" + safeTaskTitle + "\" due \"" + reminderText + "\""))
+                                .bigText("You have a task \"" + taskTitle + "\" due \"" + reminderText + "\""))
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setAutoCancel(true);
 
@@ -66,9 +65,6 @@ public class ReminderReceiver extends BroadcastReceiver {
     }
 
     private String formatReminderOffset(int reminderMinutesBefore) {
-        if (reminderMinutesBefore < 0) {
-            return "unknown time";
-        }
         if (reminderMinutesBefore == 0) {
             return "now";
         }

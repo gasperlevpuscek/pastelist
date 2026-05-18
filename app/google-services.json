@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "986159035908",
+    "project_id": "pastelistdb",
+    "storage_bucket": "pastelistdb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:986159035908:android:413025d66ff3ec1a1b2751",
+        "android_client_info": {
+          "package_name": "com.plantris.pastelist"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUrYTYos5o_G4PjjsCn-z3mdKC-8QfHhc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

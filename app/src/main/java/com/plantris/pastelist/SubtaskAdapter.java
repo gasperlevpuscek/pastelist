@@ -17,8 +17,8 @@ public class SubtaskAdapter extends RecyclerView.Adapter<SubtaskAdapter.SubtaskV
         void onSubtaskCompletionChanged(@NonNull SubtaskItem item, boolean isCompleted);
     }
 
-    private final ArrayList<SubtaskItem> items;
-    private final OnSubtaskCompletionChanged completionChanged;
+    private ArrayList<SubtaskItem> items;
+    private OnSubtaskCompletionChanged completionChanged;
 
     public SubtaskAdapter(ArrayList<SubtaskItem> items) {
         this(items, null);
@@ -80,9 +80,9 @@ public class SubtaskAdapter extends RecyclerView.Adapter<SubtaskAdapter.SubtaskV
     }
 
     static class SubtaskVH extends RecyclerView.ViewHolder {
-        final CheckBox checkBoxCompleted;
-        final TextView textViewTitle;
-        final TextView textViewDescription;
+        CheckBox checkBoxCompleted;
+        TextView textViewTitle;
+        TextView textViewDescription;
 
         SubtaskVH(@NonNull View itemView) {
             super(itemView);

@@ -2,10 +2,10 @@ package com.plantris.pastelist;
 
 public class SubtaskItem {
 
-    private final long id;
-    private final long taskId;
-    private final String title;
-    private final String description;
+    private long id;
+    private long taskId;
+    private String title;
+    private String description;
     private boolean isCompleted;
 
     public SubtaskItem(long id, long taskId, String title, String description, boolean isCompleted) {

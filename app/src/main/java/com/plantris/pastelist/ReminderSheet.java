@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
-public final class ReminderSheet {
+public class ReminderSheet {
 
     private ReminderSheet() {
         // Utility class.
@@ -33,11 +33,6 @@ public final class ReminderSheet {
         RadioGroup reminderOptions = reminderView.findViewById(R.id.reminderRadioGroup);
         Button btnSaveReminder = reminderView.findViewById(R.id.btnSaveReminder);
 
-        // Default to "No reminder"
-        if (reminderOptions.getChildCount() > 0) {
-            ((RadioButton) reminderOptions.getChildAt(0)).setChecked(true);
-        }
-
         btnSaveReminder.setOnClickListener(v -> {
             int selectedId = reminderOptions.getCheckedRadioButtonId();
             Integer reminderMinutesBefore = null;
@@ -47,17 +42,10 @@ public final class ReminderSheet {
                 reminderMinutesBefore = 60;
             } else if (selectedId == R.id.reminder_1_day) {
                 reminderMinutesBefore = 1440;
-            } else if (selectedId == R.id.reminder_custom) {
-                reminderMinutesBefore = null;
-            } else {
-                reminderMinutesBefore = null;
             }
             listener.onReminderSelected(reminderMinutesBefore);
             reminderDialog.dismiss();
         });
-
-
-
 
         reminderDialog.show();
     }

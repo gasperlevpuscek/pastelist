@@ -16,7 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
 
-public final class EditTask {
+public class EditTask {
 
     public interface OnTaskActionListener {
         void onDuplicateRequested(@NonNull TodoItem item);
@@ -53,8 +53,8 @@ public final class EditTask {
         taskNameInput.setText(safe(item.getTitle()));
         taskDescriptionInput.setText(safe(item.getDescription()));
 
-        final String[] selectedDate = {safe(item.getDate())};
-        final String[] selectedTime = {safe(item.getTime())};
+        String[] selectedDate = {safe(item.getDate())};
+        String[] selectedTime = {safe(item.getTime())};
         btnDate.setText(formatDateLabel(selectedDate[0], selectedTime[0]));
 
         btnDate.setOnClickListener(v -> DateSheet.show(
@@ -79,6 +79,7 @@ public final class EditTask {
                     item.isCompleted()
             );
             listener.onSaveRequested(updatedItem);
+            editDialog.dismiss();
         });
 
         btnTaskMenu.setOnClickListener(v -> showOptionsSheet(activity, root, item, listener, editDialog));

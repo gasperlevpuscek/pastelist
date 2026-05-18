@@ -27,15 +27,13 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
-public final class AddTaskSheet {
+public class AddTaskSheet {
 
-    private static final String TAG = "AddTaskSheet";
+    private static String TAG = "AddTaskSheet";
 
     private AddTaskSheet() {
         // Utility class.
     }
-
-
 
     public interface OnTaskAddedListener {
         void onTaskAdded(TodoItem item);
@@ -74,10 +72,10 @@ public final class AddTaskSheet {
         MaterialButton btnOpenDatePicker = view.findViewById(R.id.atTaskOpenDatePicker);
         MaterialButton btnOpenReminderPicker = view.findViewById(R.id.atTaskReminder);
 
-        final boolean isEditing = itemToEdit != null;
-        final String[] selectedDate = {isEditing ? safe(itemToEdit.getDate()) : ""};
-        final String[] selectedTime = {isEditing ? safe(itemToEdit.getTime()) : ""};
-        final Integer[] selectedReminderMinutesBefore = {isEditing ? itemToEdit.getReminderMinutesBefore() : null};
+        boolean isEditing = itemToEdit != null;
+        String[] selectedDate = {isEditing ? safe(itemToEdit.getDate()) : ""};
+        String[] selectedTime = {isEditing ? safe(itemToEdit.getTime()) : ""};
+        Integer[] selectedReminderMinutesBefore = {isEditing ? itemToEdit.getReminderMinutesBefore() : null};
 
         if (isEditing) {
             taskNameInput.setText(safe(itemToEdit.getTitle()));
@@ -262,12 +260,7 @@ public final class AddTaskSheet {
                         pendingIntent
                 );
             } else {
-                Log.w(TAG, "Exact alarm access unavailable; using inexact fallback");
-                alarmManager.setAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP,
-                        triggerTime,
-                        pendingIntent
-                );
+                Log.w(TAG, "Exact alarm access unavailable; reminder not scheduled");
             }
         } catch (SecurityException e) {
             Log.e(TAG, "Failed to schedule reminder due to alarm permission restrictions", e);
@@ -283,4 +276,5 @@ public final class AddTaskSheet {
 
 
 }
+
 

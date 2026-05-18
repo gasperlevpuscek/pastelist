@@ -22,16 +22,16 @@ import java.util.Map;
 
 public class UpcomingFragment extends Fragment {
 
-    private static final DateTimeFormatter DB_DATE_FORMATTER =
+    private static DateTimeFormatter DB_DATE_FORMATTER =
             DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.getDefault());
-    private static final DateTimeFormatter DB_TIME_FORMATTER =
+    private static DateTimeFormatter DB_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault());
 
     private UpcomingDateAdapter upcomingDateAdapter;
     private TaskFragment taskFragment;
 
     public void setTaskFragment(TaskFragment fragment) {
-        this.taskFragment = fragment;
+        taskFragment = fragment;
     }
 
     public UpcomingFragment() {

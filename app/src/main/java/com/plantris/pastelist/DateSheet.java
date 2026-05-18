@@ -16,7 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import java.util.Calendar;
 import java.util.Locale;
 
-public final class DateSheet {
+public class DateSheet {
 
     private DateSheet() {
         // Utility class.
@@ -46,21 +46,10 @@ public final class DateSheet {
         Button btnSaveDate = dateView.findViewById(R.id.btnSaveDate);
         Button btnNoDate = dateView.findViewById(R.id.btnNoDate);
 
-        Calendar now = Calendar.getInstance();
-        String today = String.format(
-                Locale.getDefault(),
-                "%02d.%02d.%d",
-                now.get(Calendar.DAY_OF_MONTH),
-                now.get(Calendar.MONTH) + 1,
-                now.get(Calendar.YEAR)
-        );
-
-        final String[] selectedDate = {
-                (initialDate == null || initialDate.trim().isEmpty()) ? today : initialDate
+        String[] selectedDate = {
+                initialDate == null ? "" : initialDate.trim()
         };
-        final String[] selectedTime = {initialTime == null ? "" : initialTime};
-
-        calendarView.setDate(now.getTimeInMillis(), false, true);
+        String[] selectedTime = {initialTime == null ? "" : initialTime};
 
         tvAddTime.setText(selectedTime[0].isEmpty() ? activity.getString(R.string.add_time) : selectedTime[0]);
 
